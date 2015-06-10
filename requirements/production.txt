@@ -28,8 +28,5 @@ python-memcached
 # Admin
 django-debug-toolbar
 
-# Migrations
-South
-
 # Feature testing
 #django-waffle
