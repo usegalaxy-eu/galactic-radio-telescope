@@ -1,0 +1,17 @@
+{% extends "_layouts/base.html" %}
+
+{% block css %}
+{{block.super}}
+{% endblock css %}
+
+{% block page_title %}Galaxy Radio Telescope - About{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+<div class="container">
+
+<form action="/report/" method="post">
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "_layouts/base.html" %}
+
+{% block css %}
+{{block.super}}
+{% endblock css %}
+
+{% block page_title %}Galaxy Radio Telescope - Directory{% endblock %}
+{% block page_class %}instance-list{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Galaxy Directory</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr><th>Name</th><th>Description</th><th>Users</th></tr>
+        </thead>
+        <tbody>
+        {% for galaxy in object_list %}
+            {% if galaxy.public %}
+                <tr>
+                    <td>
+                        <a href="{% url 'galaxy-instance-detail' galaxy.uuid %}">
+                            {{ galaxy.humanname }}
+                        </a>
+                    </td>
+                    <td>{{ galaxy.description }}</td>
+                    <td>{{ galaxy.users_total }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
