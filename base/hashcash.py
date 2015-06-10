@@ -112,26 +112,7 @@ def check(stamp, resource=None, bits=None,
     NOTE: Every valid (version 1) stamp must meet its claimed bit value
     NOTE: Check floor of 4-bit multiples (overly permissive in acceptance)
     """
-    if stamp.startswith('0:'):          # Version 0
-        try:
-            date, res, suffix = stamp[2:].split(':')
-        except ValueError:
-            ERR.write("Malformed version 0 hashcash stamp!\n")
-            return False
-        if resource is not None and resource != res:
-            return False
-        elif check_expiration is not None:
-            good_until = strftime("%y%m%d%H%M%S", localtime(time()-check_expiration))
-            if date < good_until:
-                return False
-        elif callable(ds_callback) and ds_callback(stamp):
-            return False
-        elif type(bits) is not int:
-            return True
-        else:
-            hex_digits = int(floor(bits/4))
-            return sha(stamp).hexdigest().startswith('0'*hex_digits)
-    elif stamp.startswith('1:'):        # Version 1
+    if stamp.startswith('1:'):
         try:
             claim, date, res, ext, rand, counter = stamp[2:].split(':')
         except ValueError:
@@ -151,18 +132,11 @@ def check(stamp, resource=None, bits=None,
         elif callable(ds_callback) and ds_callback(stamp):
             ERR.write("Doubly spent!\n")
             return False
-        else:
-            hex_digits = int(floor(int(claim)/4))
-            return sha(stamp).hexdigest().startswith('0'*hex_digits)
+
+        hex_digits = int(floor(int(claim)/4))
+        return sha(stamp).hexdigest().startswith('0'*hex_digits)
     else:                               # Unknown ver or generalized hashcash
-        ERR.write("Unknown hashcash version: Minimal authentication!\n")
-        if type(bits) is not int:
-            return True
-        elif resource is not None and stamp.find(resource) < 0:
-            return False
-        else:
-            hex_digits = int(floor(bits/4))
-            return sha(stamp).hexdigest().startswith('0'*hex_digits)
+        return False
 
 def is_doublespent(stamp):
     """Placeholder for double spending callback function
