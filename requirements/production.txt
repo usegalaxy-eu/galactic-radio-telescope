@@ -30,3 +30,4 @@ django-debug-toolbar
 
 # Feature testing
 #django-waffle
+django-uuidfield
