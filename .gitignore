@@ -76,3 +76,5 @@ target/
 __pycache__/
 local_settings.py
 
+.venv
+db/development.sqlite3
