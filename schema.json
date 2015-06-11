@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "https://cpt.tamu.edu/grs",
+  "type": "object",
+  "properties": {
+    "galaxy_instance": {
+      "id": "https://cpt.tamu.edu/grs/galaxy_instance",
+      "type": "string",
+      "default": "",
+      "title": "Galaxy instance ID",
+      "description": "set internally"
+    },
+    "starttime": {
+      "id": "https://cpt.tamu.edu/grs/starttime",
+      "type": "string",
+      "default": "",
+      "description": "Job entry creation time",
+      "title": "Job Start Time"
+    },
+    "handler": {
+      "id": "https://cpt.tamu.edu/grs/handler",
+      "type": "string",
+      "default": "",
+      "description": "handler name"
+    },
+    "runner": {
+      "id": "https://cpt.tamu.edu/grs/runner",
+      "type": "string",
+      "default": "",
+      "description": "job runner id"
+    },
+    "exit_code": {
+      "id": "https://cpt.tamu.edu/grs/exit_code",
+      "type": "integer",
+      "default": "0",
+      "title": "Exit Code",
+      "description": "exit code of the underlying wrapper"
+    },
+    "state": {
+      "id": "https://cpt.tamu.edu/grs/state",
+      "type": "string",
+      "default": "ok",
+      "title": "Job state",
+      "description": "running jobs should be ignored."
+    },
+    "tool_id": {
+      "id": "https://cpt.tamu.edu/grs/tool_id",
+      "type": "string",
+      "default": "",
+      "description": "Full tool id, e.g. toolshed.g2.bx.psu.edu/repos/nilesh/bcftools/bcftools_view/0.0.1",
+      "title": "Tool ID"
+    },
+    "tool_version": {
+      "id": "https://cpt.tamu.edu/grs/tool_version",
+      "type": "string",
+      "default": "",
+      "title": "Tool Version"
+    },
+    "params": {
+      "id": "https://cpt.tamu.edu/grs/params",
+      "type": "object",
+      "properties": {},
+      "description": "dictionary of parameters given to the job",
+      "title": "Job Pararmeter Dictionary"
+    },
+    "metrics": {
+      "id": "https://cpt.tamu.edu/grs/metrics",
+      "type": "object",
+      "properties": {
+        "core": {
+          "id": "https://cpt.tamu.edu/grs/metrics/core",
+          "type": "object",
+          "properties": {}
+        },
+        "meminfo": {
+          "id": "https://cpt.tamu.edu/grs/metrics/meminfo",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "cpuinfo": {
+          "id": "https://cpt.tamu.edu/grs/metrics/cpuinfo",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        }
+      },
+      "description": "Job metrics section from the metrics plugin"
+    }
+  },
+  "required": [
+    "galaxy_instance",
+    "starttime",
+    "handler",
+    "runner",
+    "exit_code",
+    "state",
+    "tool_id",
+    "tool_version",
+    "params",
+    "metrics"
+  ]
+}
