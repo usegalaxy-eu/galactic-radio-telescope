@@ -4,6 +4,7 @@ These settings overrides what's in settings/base.py
 """
 
 from . import base
+import os
 
 
 # To extend any settings from settings/base.py here's an example.
@@ -19,17 +20,15 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
-        #'OPTIONS': {
-        #    'init_command': 'SET storage_engine=InnoDB',
-        #    'charset' : 'utf8',
-        #    'use_unicode' : True,
-        #},
-        #'TEST_CHARSET': 'utf8',
-        #'TEST_COLLATION': 'utf8_general_ci',
     },
-    # 'slave': {
-    #     ...
-    # },
+    'mongo': {
+        'ENGINE': 'django_mongodb_engine',
+        'NAME': 'mongo_db',
+        'USER': 'grt',
+        'PASSWORD': '',
+        'HOST': os.environ.get('MONGO_PORT_27017_TCP_ADDR', 'localhost'),
+        'PORT': os.environ.get('MONGO_PORT_27017_TCP_PORT', '27017'),
+    }
 }
 
 # Recipients of traceback emails and other notifications.
