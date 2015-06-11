@@ -67,23 +67,6 @@
       "id": "https://cpt.tamu.edu/grs/metrics",
       "type": "object",
       "properties": {
-        "core": {
-          "id": "https://cpt.tamu.edu/grs/metrics/core",
-          "type": "object",
-          "properties": {}
-        },
-        "meminfo": {
-          "id": "https://cpt.tamu.edu/grs/metrics/meminfo",
-          "type": "object",
-          "properties": {},
-          "additionalProperties": false
-        },
-        "cpuinfo": {
-          "id": "https://cpt.tamu.edu/grs/metrics/cpuinfo",
-          "type": "object",
-          "properties": {},
-          "additionalProperties": false
-        }
       },
       "description": "Job metrics section from the metrics plugin"
     }

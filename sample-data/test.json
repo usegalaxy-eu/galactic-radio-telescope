@@ -1,0 +1,47 @@
+[
+  {
+    "galaxy_instance": "deadbeefcafe",
+    "starttime": "2014-07-15 18:18:17.433394",
+    "handler": "local",
+    "runner": "handler1",
+    "exit_code": 0,
+    "state": "ok",
+    "tool_id": "toolshed.g2.bx.psu.edu/repos/nilesh/bcftools/bcftools_view/0.0.1",
+    "tool_version": "0.0.1",
+    "params": {
+      "A": "false",
+      "c": "true",
+      "b": "false",
+      "e": "false",
+      "D": {"seq_dictionary": "false", "__current_case__": 1},
+      "G": "false",
+      "F": "false",
+      "i": {"__current_case__": 1, "alt_indel_snp_ratio": "false"},
+      "chromInfo": "/home/galaxy/galaxy/tool-data/shared/ucsc/chrom/?.len",
+      "dbkey": "?",
+      "N": "false",
+      "g": "true",
+      "S": "false",
+      "u": "false",
+      "t": {"mutation_rate": "false", "__current_case__": 1},
+      "v": "true",
+      "input": 10534,
+      "p": {"variant_filter": "false", "__current_case__": 1}
+    },
+    "metrics": {
+        "core": {
+            "start_epoch": 1405448301.0000000,
+            "end_epoch": 1405448301.0000000,
+            "galaxy_slots": 1,
+            "runtime_seconds": 0.0000
+        },
+        "meminfo": {
+            "swaptotal": 16765948.0000000,
+            "memtotal": 16423156.0000000
+        },
+        "cpuinfo": {
+            "processor_count": 8
+        }
+    }
+  }
+]
