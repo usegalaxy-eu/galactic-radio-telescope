@@ -67,6 +67,30 @@ def _validate_hashcash(stamp, ip):
 
 
 def stats_galaxy(request):
+    userdata = {
+        'x': ['<10', '10-49', '50-99', '100-199', '200-499', '500+'],
+        'y1': [7, 8, 4, 4, 1, 1],
+    }
+    computedata = {
+        'x': ['Standalone server', 'Compute cluster', 'Cloud'],
+        'y1': [12, 10, 4],
+    }
+    storagedata = {
+        'x': [x + ' Tb' for x in ['<10', '10-49', '50-99', '100-199', '200-299']],
+        'y1': [8, 7, 4, 1, 4],
+    }
+    data = {
+        'usertype': 'discreteBarChart',
+        'userdata': userdata,
+        'computetype': 'discreteBarChart',
+        'computedata': computedata,
+        'storagetype': 'discreteBarChart',
+        'storagedata': storagedata,
+    }
+    return render(request, 'base/galaxy-stats.html', data)
+
+
+def stats_jobs(request):
     xdata = ['0-10', '10-50', '50-100', '100-1000', '1000+']
     ydata = [1000, 200, 50, 10, 2]
     chartdata = {

@@ -42,12 +42,12 @@
         <div class="col-md-4">
           <h2>View Galaxy Statistics</h2>
           <p>Anonymous metadata about Galaxy instances like number of users, number of jobs run, job submission hours, etc.</p>
-          <p><a class="btn btn-default" href="#" role="button">View »</a></p>
+          <p><a class="btn btn-default" href="{% url 'stats-galaxy' %}" role="button">View »</a></p>
         </div>
         <div class="col-md-4">
           <h2>View Job Statistics</h2>
           <p>Anonymous metadata about job runs like input file sizes, runtimes, memory usage, tool popularity, etc.</p>
-          <p><a class="btn btn-default" href="#" role="button">View »</a></p>
+          <p><a class="btn btn-default" href="{% url 'stats-jobs' %}" role="button">View »</a></p>
        </div>
       </div>
     </div>
