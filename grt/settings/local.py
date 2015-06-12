@@ -20,14 +20,6 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
-    },
-    'mongo': {
-        'ENGINE': 'django_mongodb_engine',
-        'NAME': 'mongo_db',
-        'USER': 'grt',
-        'PASSWORD': '',
-        'HOST': os.environ.get('MONGO_PORT_27017_TCP_ADDR', 'localhost'),
-        'PORT': os.environ.get('MONGO_PORT_27017_TCP_PORT', '27017'),
     }
 }
 
@@ -86,3 +78,4 @@ LOGGING = {
 }
 
 INTERNAL_IPS = ('127.0.0.1')
+STATIC_URL = "/t/static/"

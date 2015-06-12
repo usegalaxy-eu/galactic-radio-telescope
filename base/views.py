@@ -59,12 +59,33 @@ def report(request):
 
 
 def _validate_hashcash(stamp, ip):
-    res = 'galaxy-radio-telescope-%s' % ip
+    res = _build_challenge(ip)
     expiry = 60 * 60 * 24 * 10
     # Stamps last TEN days.
     # TODO: decrease to 5 minutes
-    import pprint; pprint.pprint("Expected res: %s" % res)
     return check(stamp, resource=res, check_expiration=expiry, bits=10)
+
+
+@csrf_exempt
+def report_challenge(request):
+    return HttpResponse(_build_challenge(request), status=400)
+
+def _build_challenge(request):
+    """Hashcash challenges are per-site. I feel like I should further make this
+    random/site specific, but I'm not even convinced that it really needs to be
+    done?
+
+    The goal is to disincentivise spamming GRT with bad data. Maybe as a result
+    of this, for every error in parsing of your data, we ratchet the difficulty
+    up until it's impossible to submit data? (Galaxy side would have a cutoff
+    where it'd log an admin message to say "hey, something is seriously wrong
+    here")
+
+    Detecting bad data is tough..., so we're screwing over entire sites/IP
+    addresses until we can get a solution for that.
+    """
+    ipaddr = request.META['REMOTE_ADDR']
+    return 'galaxy-radio-telescope-%s' % ipaddr
 
 
 class GalaxyInstanceView(DetailView):
