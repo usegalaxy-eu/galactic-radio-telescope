@@ -78,3 +78,4 @@ local_settings.py
 
 .venv
 db/development.sqlite3
+base/static/bower_components/*
