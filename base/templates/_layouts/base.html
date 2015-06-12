@@ -21,7 +21,7 @@
   <meta name="viewport" content="width=device-width">
 
   {% block meta %}
-  {% endblock %}
+  {% endblock meta %}
 
   {# use the CDN to get bootstrap css. can not be inside compress css block #}
   {% block cdn_css %}
@@ -29,8 +29,9 @@
   {% endblock cdn_css %}
 
   {% compress css %}
-  <link rel="stylesheet" href="{% static 'css/app.css' %}">
-  {% block css %}{% endblock %}
+  <link rel="stylesheet" href="{% static 'css/app.css' %}" type="text/css" />
+  <link rel="stylesheet" href="{% static 'nvd3/src/nv.d3.css' %}" type="text/css" />
+  {% block css %}{% endblock css %}
   {% endcompress %}
   <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
 
@@ -39,7 +40,12 @@
        Create your own custom Modernizr build: www.modernizr.com/download/ -->
   {% compress js %}
   <script src="{% static 'js/libs/modernizr-2.6.2-respond-1.1.0.min.js' %}"></script>
+  <script src="{% static 'd3/d3.min.js' %}"></script>
+  <script src="{% static 'nvd3/nv.d3.min.js' %}"></script>
   {% endcompress %}
+
+  {% block header_extra %}
+  {% endblock header_extra %}
 </head>
 <body class="{% block body_class %}{% endblock %}" {% block body_attributes %}{% endblock %}>
 {% block body %}

@@ -10,6 +10,7 @@ urlpatterns = patterns('base.views',
     url(r'^about.html', TemplateView.as_view(template_name='base/about.html')),
     url(r'^report/$', 'report'),
     url(r'^report/challenge/$', 'report_challenge'),
+    url(r'^stats/galaxy/$', 'stats_galaxy', name='stats-galaxy'),
     url(r'^galaxy/$', GalaxyInstanceListView.as_view(), name='galaxy-instance-list'),
     url(r'^galaxy/(?P<slug>[0-9a-f]{32})/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
 )

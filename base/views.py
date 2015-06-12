@@ -66,6 +66,20 @@ def _validate_hashcash(stamp, ip):
     return check(stamp, resource=res, check_expiration=expiry, bits=10)
 
 
+def stats_galaxy(request):
+    xdata = ['0-10', '10-50', '50-100', '100-1000', '1000+']
+    ydata = [1000, 200, 50, 10, 2]
+    chartdata = {
+        'x': xdata,
+        'y1': ydata,
+    }
+    data = {
+        'charttype': 'discreteBarChart',
+        'chartdata': chartdata,
+    }
+    return render(request, 'base/galaxy-stats.html', data)
+
+
 @csrf_exempt
 def report_challenge(request):
     return HttpResponse(_build_challenge(request), status=400)

@@ -32,3 +32,6 @@ django-debug-toolbar
 #django-waffle
 django-uuidfield
 jsonschema
+
+# Charts
+django-nvd3

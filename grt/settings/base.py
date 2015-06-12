@@ -49,6 +49,10 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'compressor',
 
+    # Charts charts charts
+    'djangobower',
+    'django_nvd3',
+
     # Application base, containing global templates.
     'base',
 
@@ -125,6 +129,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
+    'djangobower.finders.BowerFinder',
 )
 
 MIDDLEWARE_CLASSES = [
@@ -268,6 +273,14 @@ ALLOWED_HOSTS = []
 # BROKER_PASSWORD = 'django'
 # BROKER_VHOST = 'django'
 # CELERY_RESULT_BACKEND = 'amqp'
+
+BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT, 'base', 'static')
+BOWER_PATH = '/usr/local/bin/bower'
+BOWER_INSTALLED_APPS = (
+    'd3#3.3.8',
+    'nvd3#1.1.12-beta',
+    'jquery#2.1.1',
+)
 
 INTERNAL_IPS = ('127.0.0.1')
 
