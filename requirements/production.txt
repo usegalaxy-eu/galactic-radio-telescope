@@ -35,4 +35,4 @@ jsonschema
 
 # Charts
 django-nvd3
-djangobower
+django-bower

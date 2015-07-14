@@ -10,7 +10,7 @@ should answer questions like:
 
 > If I'm mapping a 32 Gb FastQ dataset against a 1Mbp genome, what are the *likely* minimum/optimal compute requirements
 
-## Sturcture
+## Structure
 
 This repo will encompass a web service which aggregates data and eventually
 statistical methods to make rational decisions about that data.
@@ -24,6 +24,7 @@ service.
 sudo apt-get install libffi-dev
 pip install -r requirements.txt
 pip install -r requirements/local.txt
+
 sudo npm install -g bower
 python manage.py bower install
 python manage.py syncdb
