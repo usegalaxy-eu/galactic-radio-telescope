@@ -21,12 +21,13 @@ service.
 ## Dev Setup
 
 ```console
+sudo apt-get install libffi-dev
 pip install -r requirements.txt
 pip install -r requirements/local.txt
 sudo npm install -g bower
-python managedb.py bower install
-python managedb.py syncdb
-python managedb.py runserver
+python manage.py bower install
+python manage.py syncdb
+python manage.py runserver
 ```
 
 
