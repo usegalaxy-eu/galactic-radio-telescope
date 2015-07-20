@@ -34,10 +34,6 @@ class GalaxyInstance(models.Model):
     # Aggregate Job Data
     jobs_run = models.IntegerField(default=0)
 
-class ConvertUnixTimestamp(models.DateTimeField):
-    def get_prep_value(self, value):
-        return datetime.datetime.utcfromtimestamp(value).strftime('%Y-%m-%d %H:%M:%S')
-
 class Job(models.Model):
     ## Galaxy Instance
     instance = models.ForeignKey(GalaxyInstance)
@@ -47,16 +43,16 @@ class Job(models.Model):
     tool_version = models.CharField(max_length=32)
 
     ## Run Information
-    start_date = models.DateField(null=True, blank=True)
+    start_date = models.DateTimeField(null=True, blank=True)
     handler = models.CharField(max_length=60)
     runner = models.CharField(max_length=60)
     exit_code = models.IntegerField(blank=True, null=True) # maybe PositiveSmallIntegerField?
     state = models.CharField(max_length=30)
     params = JSONField()
-    metrics_core_start_epoch = ConvertUnixTimestamp(blank=True, null=True)
-    metrics_core_end_epoch = ConvertUnixTimestamp(blank=True, null=True)
+    metrics_core_start_epoch = models.DateTimeField(blank=True, null=True)
+    metrics_core_end_epoch = models.DateTimeField(blank=True, null=True)
     metrics_core_galaxy_slots = models.IntegerField(default=0)
     metrics_core_runtime_seconds = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
-    metrics_meminfo_swaptotal = ConvertUnixTimestamp(blank=True, null=True)
-    metrics_meminfo_memtotal = ConvertUnixTimestamp(blank=True, null=True)
+    metrics_meminfo_swaptotal = models.IntegerField(blank=True, null=True)
+    metrics_meminfo_memtotal = models.IntegerField(blank=True, null=True)
     metrics_cpuinfo_processor_count = models.IntegerField(default=0)
