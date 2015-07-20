@@ -1,4 +1,9 @@
 # Created by https://www.gitignore.io
+# Virtualenv
+.Python
+bin
+lib
+include
 
 ### Vim ###
 [._]*.s[a-w][a-z]
