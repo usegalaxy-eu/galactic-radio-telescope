@@ -1,0 +1,55 @@
+{% extends "_layouts/base.html" %}
+
+{% block css %}
+{{block.super}}
+{% endblock css %}
+
+{% block page_title %}Galaxy Radio Telescope - Home{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+<!-- This code is taken from http://getbootstrap.com/examples/jumbotron/ -->
+
+
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Galaxy Radio Telescope</h1>
+        <p>This is a project to collect metrics from Galaxy servers across the
+        universe, and aggregate the data for statistical analysis.
+        </p>
+
+        <p>
+        The ultimate goal of this project is to have a simple service which,
+        based on hundreds of thousands of job runs, can help Galaxy
+        administrators design optimised rules for distribution jobs to
+        available clusters. This service should answer questions like:
+        </p>
+
+            <blockquote>
+            If I'm mapping a 32 Gb FastQ dataset against a 1Mbp genome, what are the *likely* minimum/optimal compute requirements
+            </blockquote>
+        <p><a class="btn btn-primary btn-lg" role="button" href="about.html">Learn more »</a></p>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Public Galaxy Directory</h2>
+          <p>Listing of public Galaxy instances</p>
+          <p><a class="btn btn-default" href="{% url 'galaxy-instance-list' %}" role="button">View »</a></p>
+       </div>
+        <div class="col-md-4">
+          <h2>View Galaxy Statistics</h2>
+          <p>Anonymous metadata about Galaxy instances like number of users, number of jobs run, job submission hours, etc.</p>
+          <p><a class="btn btn-default" href="{% url 'stats-galaxy' %}" role="button">View »</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2>View Job Statistics</h2>
+          <p>Anonymous metadata about job runs like input file sizes, runtimes, memory usage, tool popularity, etc.</p>
+          <p><a class="btn btn-default" href="{% url 'stats-jobs' %}" role="button">View »</a></p>
+       </div>
+      </div>
+    </div>
+
+{% endblock %}
