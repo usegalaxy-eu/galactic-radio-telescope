@@ -8,7 +8,8 @@ hundreds of thousands of job runs, can help Galaxy administrators design
 optimised rules for distribution jobs to available clusters. This service
 should answer questions like:
 
-> If I'm mapping a 32 Gb FastQ dataset against a 1Mbp genome, what are the *likely* minimum/optimal compute requirements
+> If I'm mapping a 32 Gb FastQ dataset against a 1Mbp genome, what are the
+> *likely* minimum/optimal compute requirements
 
 ## Structure
 
@@ -21,13 +22,8 @@ service.
 ## Dev Setup
 
 ```console
-sudo apt-get install libffi-dev
 pip install -r requirements.txt
-pip install -r requirements/local.txt
-
-sudo npm install -g bower
-python manage.py bower install
-python manage.py syncdb
+python manage.py migrate
 python manage.py runserver
 ```
 
