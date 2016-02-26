@@ -1,2 +1,0 @@
-- Docker images
-- https://github.com/xenith/django-base-template deploy properly with fabfile
