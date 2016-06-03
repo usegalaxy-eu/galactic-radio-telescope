@@ -4,4 +4,6 @@ django-bootstrap3
 django-uuidfield
 jsonfield
 python-nvd3
-django-user-accounts i
+django-user-accounts
+django-fontawesome
+constant_time_compare

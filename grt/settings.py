@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_nvd3',
     'bootstrap_themes',
     'django.contrib.sites',
+    'fontawesome',
     'bootstrap3',
     'account',
     'api',
@@ -128,3 +129,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+SITE_ID = 1

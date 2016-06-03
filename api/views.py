@@ -1,48 +1,120 @@
-from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.shortcuts import render
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.db import transaction
+from constant_time_compare import compare
+from django.db import transaction
 from .forms import ReportForm
-from .models import GalaxyInstance
-import socket
-if hasattr(socket, 'setdefaulttimeout'):
-    socket.setdefaulttimeout(3)
+from .models import GalaxyInstance, Tool, Job, IntegerDataPoint
+import re
+import json
+import datetime
+import logging
+log = logging.getLogger(__name__)
 
 
+
+@transaction.atomic
 @csrf_exempt
-def report(request):
-    if request.method == 'POST':
-        form = ReportForm(request.POST, request.FILES)
-        dnsdomainname = socket.gethostbyaddr(form.data['ipaddr'])[0]
+def v1_upload_data(request):
+    """Accept uploaded data regarding jobs"""
+    # Must be a POST
+    if request.method != 'POST':
+        return HttpResponse(status=405)
 
-        try:
-            gi = GalaxyInstance.objects.get(dnsdomainname=dnsdomainname)
+    # Must be able to parse JSON. TODO: Limit request sizes?
+    data = request.body
+    try:
+        data = json.loads(data)
+    except Exception, e:
+        # Bad request
+        return HttpResponse(status=400)
 
-            # Update instance metadata
-            for attr in ('public', 'users_recent', 'users_total', 'jobs_run',
-                        'humanname', 'description'):
-                if attr in form.data:
-                    setattr(gi, attr, form.data[attr])
-            # Save instance
-            gi.save()
-        except GalaxyInstance.DoesNotExist:
-            kwargs = {
-                'dnsdomainname': dnsdomainname,
-            }
-            for attr in ('public', 'users_recent', 'users_active',
-                         'users_total', 'jobs_run', 'humanname',
-                         'description'):
-                kwargs[attr] = form.data[attr]
+    metadata = data.get('meta', {})
 
-            gi = GalaxyInstance(**kwargs)
-            gi.save()
-        return HttpResponse(status=200)
-    else:
-        form = ReportForm()
-        return render(request, 'base/report.html', {'form': form})
+    # Instance UUID must be available
+    instance_uuid = metadata.get('instance_uuid', None)
+    if instance_uuid is None:
+        return HttpResponse(status=400)
+
+    instance = get_object_or_404(GalaxyInstance, uuid=instance_uuid)
+
+    # Instance API key must be available
+    instance_api_key = metadata.get('instance_api_key', None)
+    if instance_api_key is None:
+        return HttpResponse(status=400)
+
+    # Instance API key must be correct.
+    if not compare(str(instance_api_key), str(instance.api_key)):
+        return HttpResponse(status=400)
+
+    # First update Galaxy instance metadata
+    instance_users_recent = IntegerDataPoint(value=metadata.get('active_users', 0))
+    instance_users_recent.save()
+    instance.users_recent.add(instance_users_recent)
+
+    instance_users_total = IntegerDataPoint(value=metadata.get('total_users', 0))
+    instance_users_total.save()
+    instance.users_total.add(instance_users_total)
+
+    instance_jobs_run = IntegerDataPoint(value=metadata.get('recent_jobs', 0))
+    instance_jobs_run.save()
+    instance.jobs_run.add(instance_jobs_run)
+
+    # instance.prepend_users_recent()
+    # instance.prepend_users_total(metadata.get('total_users', 0))
+    # instance.prepend_jobs_run(metadata.get('recent_jobs', 0))
+    instance.save()
+
+    tools = {}
+    # Next we process the acknowleged tools:
+    for idx, unsafe_tool_data in enumerate(data.get('tools', [])):
+        # 'tool_id': 'xmfa2tbl',
+        # 'tool_version': '2.4.0.0',
+        # 'tool_name': 'Convert XMFA to a percent identity table',
+        tool_data = {
+            'tool_id': unsafe_tool_data.get('tool_id', None),
+            'tool_version': unsafe_tool_data.get('tool_version', None),
+            'tool_name': unsafe_tool_data.get('tool_name', None)
+        }
+        for key in tool_data.keys():
+            if tool_data[key] is not None:
+                sanitized_value = re.sub('[^A-Za-z0-9_./ -]+', '', tool_data[key])
+                if tool_data[key] != sanitized_value:
+                    log.warn("Sanitizied %s from %s to %s", key, tool_data[key], sanitized_value)
+                tool_data[key] = sanitized_value
+
+        # Tool data is now theoretically safe.
+        tool, tool_created = Tool.objects.get_or_create(**tool_data)
+        tools[idx] = tool
+
+    # Now we need to process the list of new jobs sent to us by the
+    # client.
+    for unsafe_job_data in data.get('jobs', []):
+        # Will throw an error on bad data, which is OK.
+        tool_idx = int(unsafe_job_data.get('tool', 0))
+        if tool_idx not in tools:
+            return HttpResponse(content='Unknown tool id %s' % tool_idx, status=400)
+        else:
+            tool = tools[tool_idx]
+
+        job_date = int(unsafe_job_data.get('date', 0))
+
+        metrics = unsafe_job_data.get('metrics', {})
+
+        job = Job(
+            instance=instance,
+            tool=tool,
+            date=datetime.datetime.fromtimestamp(job_date),
+            metrics_core_runtime_seconds=int(metrics.get('core_runtime_seconds', 0)),
+            metrics_cpuinfo_cores_allocated=int(metrics.get('cpuinfo_cores_allocated', 0)),
+        )
+        job.save()
+
+    return HttpResponse(status=200)
 
 
 def stats_galaxy(request):
@@ -82,6 +154,10 @@ def stats_jobs(request):
     }
     return render(request, 'base/galaxy-stats.html', data)
 
+class GalaxyInstanceEdit(UpdateView):
+    model = GalaxyInstance
+    slug_field = 'uuid'
+    fields = ('url', 'humanname', 'description', 'public', 'owner')
 
 class GalaxyInstanceView(DetailView):
     model = GalaxyInstance
@@ -89,3 +165,10 @@ class GalaxyInstanceView(DetailView):
 
 class GalaxyInstanceListView(ListView):
     model = GalaxyInstance
+
+class OwnedGalaxyInstanceListView(ListView):
+    model = GalaxyInstance
+
+    def get_queryset(self):
+        print self.request.user
+        return GalaxyInstance.objects.filter(owner=self.request.user)

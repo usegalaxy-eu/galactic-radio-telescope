@@ -1,24 +1,39 @@
 {% extends "base.html" %}
+{% load fontawesome %}
+{% load nvd3_tags %}
 
-{% block page_title %}Galaxy Radio Telescope - Instance{% endblock %}
-{% block content %}
+{% block page_title %}Galactic Radio Telescope - Instance{% endblock %}
+
+{% block body %}
 <div class="container">
-    <h1>Galaxy Server</h1>
-    {% if object.public %}
-
-        <table class="table table-striped">
-            <tbody>
-                <tr><td>Name</td><td>{{ object.humanname }}</td></tr>
-                <tr><td>Description</td><td>{{ object.description}}</td></tr>
-                <tr><td>URL</td><td><a href="{{ object.dnsdomainname }}">{{object.dnsdomainname}}</a></td></tr>
-                <tr><td>Users - Recent</td><td>{{ object.users_recent }}</td></tr>
-                <tr><td>Users - Active</td><td>{{ object.users_active }}</td></tr>
-                <tr><td>Users - Total</td><td>{{ object.users_total }}</td></tr>
-                <tr><td>Jobs Run</td><td>{{ object.jobs_run }}</td></tr>
-            </tbody>
-        </table>
-    {% else %}
-        <p>This Galaxy instance has elected to keep their data private</p>
-    {% endif %}
+    <h1>{{ object.humanname }}
+        {% if object.owner == request.user %}
+        <a href="{% url 'galaxy-instance-edit' object.uuid %}">
+            {% fontawesome_icon 'pencil' %}
+        </a>
+        {% endif %}
+    </h1>
+    <div class="col-md-4">
+        <p>
+            {{ object.description }}
+        </p>
+    </div>
+    <div class="col-md-8">
+        {% if object.public or object.owner == request.user %}
+            <table class="table table-striped">
+                <tbody>
+                    {% if object.owner == request.user %}
+                    <tr><td>UUID</td><td><code>{{ object.uuid }}</code></td></tr>
+                    {% endif %}
+                    <tr><td>URL</td><td>{{ object.url }}</td></tr>
+                    <tr><td>Users - Recent</td><td>{{ object.users_recent_data }}</td></tr>
+                    <tr><td>Users - Total</td><td>{{ object.users_total_data }}</td></tr>
+                    <tr><td>Jobs Run - Recent</td><td>{{ object.jobs_run_data }}</td></tr>
+                </tbody>
+            </table>
+        {% else %}
+            <p>This Galaxy instance has elected to keep their data private</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
