@@ -3,6 +3,7 @@ from django.db import models
 from uuidfield import UUIDField
 from jsonfield import JSONField
 
+
 class Tool(models.Model):
     """A single tool"""
     tool_id = models.CharField(max_length=128)

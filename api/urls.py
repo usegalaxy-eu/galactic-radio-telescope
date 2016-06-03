@@ -1,4 +1,4 @@
-from django.conf.urls import url, patterns
+from django.conf.urls import url, patterns, include
 from django.views.generic import TemplateView
 from .views import GalaxyInstanceView, GalaxyInstanceListView, stats_galaxy, stats_jobs, report
 from .views import GalaxyInstanceView
@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^stats/jobs/$', stats_jobs, name='stats-jobs'),
     url(r'^galaxy/$', GalaxyInstanceListView.as_view(), name='galaxy-instance-list'),
     url(r'^galaxy/(?P<slug>[0-9a-f]{32})/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
+    url(r"^account/", include("account.urls")),
 ]

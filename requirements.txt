@@ -1,3 +1,7 @@
-django==1.9.2
-django-uuidfield==0.5.0
-jsonfield==1.0.3
+Django==1.9.2
+django-bootstrap-themes
+django-bootstrap3
+django-uuidfield
+jsonfield
+python-nvd3
+django-user-accounts i
