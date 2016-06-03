@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import GalaxyInstance, Job
+from .models import GalaxyInstance, Job, Tool
 
 admin.site.register(GalaxyInstance)
 admin.site.register(Job)
-
-# Register your models here.
+admin.site.register(Tool)
