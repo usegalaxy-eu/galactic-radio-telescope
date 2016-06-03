@@ -1,9 +1,7 @@
 Django==1.9.2
 django-bootstrap-themes
 django-bootstrap3
-django-uuidfield
 jsonfield
-python-nvd3
 django-user-accounts
 django-fontawesome
 constant_time_compare

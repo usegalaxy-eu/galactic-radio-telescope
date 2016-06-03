@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_nvd3',
     'bootstrap_themes',
     'django.contrib.sites',
     'fontawesome',
