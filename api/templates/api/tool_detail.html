@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load fontawesome %}
+{% load nvd3_tags %}
+
+{% block page_title %}GRT - Tool - {{object.tool_id}}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>{{ object.tool_id }}</h1>
+    <p>
+        <u>{{ object.tool_name }}</u>&nbsp;{{ object.tool_description }}
+    </p>
+    <h2>Found In</h2>
+    <p>
+        <ul>
+            {% for galaxy in object.found_in %}
+            <li>
+                <a href="{% url 'galaxy-instance-detail' galaxy.uuid %}">
+                    {{ galaxy }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </p>
+    <h2>Job Run Data</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Runtime</th>
+                <th>Cores Allocated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in object.job_set.all %}
+            <tr>
+                <td>{{ job.date }}</td>
+                <td>{{ job.metrics_core_runtime_seconds }}</td>
+                <td>{{ job.metrics_cpuinfo_cores_allocated }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
