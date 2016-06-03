@@ -3,6 +3,8 @@ from django.views.generic import TemplateView
 from .views import stats_galaxy, stats_jobs, v1_upload_data, \
     GalaxyInstanceView, \
     GalaxyInstanceEdit, \
+    GalaxyInstanceCreate, \
+    GalaxyInstanceCreateSuccess, \
     GalaxyInstanceListView, \
     OwnedGalaxyInstanceListView, \
     ToolView, ToolList
@@ -13,8 +15,10 @@ urlpatterns = [
     url(r'^stats/galaxy/$', stats_galaxy, name='stats-galaxy'),
     url(r'^stats/jobs/$', stats_jobs, name='stats-jobs'),
     url(r'^galaxy/$', GalaxyInstanceListView.as_view(), name='galaxy-instance-list'),
+    url(r'^galaxy/create$', GalaxyInstanceCreate.as_view(), name='galaxy-instance-create'),
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/edit$', GalaxyInstanceEdit.as_view(), name='galaxy-instance-edit'),
+    url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/success$', GalaxyInstanceCreateSuccess.as_view(), name='galaxy-instance-create-success'),
     url(r'^galaxy/owned$', OwnedGalaxyInstanceListView.as_view(), name='owned-galaxy-instance-list'),
 
     url(r'^tool/$', ToolList.as_view(), name='tool-list'),

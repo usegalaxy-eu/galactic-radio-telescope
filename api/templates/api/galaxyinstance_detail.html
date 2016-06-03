@@ -35,27 +35,6 @@
             <p>This Galaxy instance has elected to keep their data private</p>
         {% endif %}
     </div>
-    <h2>Recent Jobs</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Tool</th>
-                <th>Date</th>
-                <th>Runtime</th>
-                <th>Cores Allocated</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for job in recent_jobs %}
-            <tr>
-                <td><a href="{% url 'tool-detail' job.tool.id  %}">{{ job.tool }}</a></td>
-                <td>{{ job.date }}</td>
-                <td>{{ job.metrics_core_runtime_seconds }}</td>
-                <td>{{ job.metrics_cpuinfo_cores_allocated }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
     <h2>Tools Available</h2>
     <ul>
         {% for tool in object.tool_set %}

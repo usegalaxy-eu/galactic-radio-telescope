@@ -43,7 +43,9 @@
 							<ul class="dropdown-menu" role="menu">
 								<li><a href="{% url 'account_settings' %}">Settings</a></li>
 								<li><a href="{% url 'account_logout' %}">Log out</a></li>
+								<li class="divider"></li>
 								<li><a href="{% url 'owned-galaxy-instance-list' %}">My Galaxies</a></li>
+								<li><a href="{% url 'galaxy-instance-create' %}">Register New Galaxy</a></li>
 
 								{% if request.user.is_superuser %}
 								<li class="divider"></li>

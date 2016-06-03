@@ -48,10 +48,10 @@ class GalaxyInstance(models.Model):
     public = models.BooleanField(default=False)
 
     # Aggregate User data. Only retain 32 data points for a nice graph.
-    users_recent = models.ManyToManyField(IntegerDataPoint, related_name='user_recent_data')
-    users_total = models.ManyToManyField(IntegerDataPoint, related_name='user_total_data')
+    users_recent = models.ManyToManyField(IntegerDataPoint, related_name='user_recent_data', blank=True)
+    users_total = models.ManyToManyField(IntegerDataPoint, related_name='user_total_data', blank=True)
     # Aggregate Job Data
-    jobs_run = models.ManyToManyField(IntegerDataPoint, related_name='job_recent_data')
+    jobs_run = models.ManyToManyField(IntegerDataPoint, related_name='job_recent_data', blank=True)
 
     # Tools installed on the server. This will allow searching through all
     # Galaxies for a particular tool.
@@ -71,15 +71,24 @@ class GalaxyInstance(models.Model):
 
     @property
     def users_recent_data(self):
-        return [x.value for x in self.users_recent.all().order_by('-date')[0:5]]
+        if self.users_recent.count() > 0:
+            return [x.value for x in self.users_recent.all().order_by('-date')[0:1]][0]
+        else:
+            return 0
 
     @property
     def users_total_data(self):
-        return [x.value for x in self.users_total.all().order_by('-date')[0:5]]
+        if self.users_total.count() > 0:
+            return [x.value for x in self.users_total.all().order_by('-date')[0:1]][0]
+        else:
+            return 0
 
     @property
     def jobs_run_data(self):
-        return [x.value for x in self.jobs_run.all().order_by('-date')[0:5]]
+        if self.jobs_run.count() > 0:
+            return [x.value for x in self.jobs_run.all().order_by('-date')[0:1]][0]
+        else:
+            return 0
 
     @property
     def tool_set(self):

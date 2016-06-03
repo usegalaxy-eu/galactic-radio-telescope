@@ -2,8 +2,9 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.shortcuts import get_object_or_404, render
+from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db import transaction
 from constant_time_compare import compare
 from django.db import transaction
@@ -165,6 +166,29 @@ class GalaxyInstanceView(DetailView):
         context = super(GalaxyInstanceView, self).get_context_data(**kwargs)
         context['recent_jobs'] = Job.objects.all().filter(instance=context['object']).order_by('-date')[0:10]
         return context
+
+class GalaxyInstanceCreateSuccess(DetailView):
+    model = GalaxyInstance
+    slug_field = 'uuid'
+    template_name_suffix = '_create_success'
+
+class GalaxyInstanceCreate(CreateView):
+    model = GalaxyInstance
+    fields = ('url', 'humanname', 'description', 'public')
+    template_name_suffix = '_create'
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'galaxy-instance-create-success',
+            kwargs={'slug': self.object.uuid}
+        )
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.owner = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class GalaxyInstanceListView(ListView):
     model = GalaxyInstance

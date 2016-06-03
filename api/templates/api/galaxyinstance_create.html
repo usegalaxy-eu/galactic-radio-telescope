@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load fontawesome %}
+{% load bootstrap3 %}
+
+{% block page_title %}Galactic Radio Telescope - Instance{% endblock %}
+{% block body %}
+<div class="container">
+    <h1>Register a Galaxy</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-default btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
