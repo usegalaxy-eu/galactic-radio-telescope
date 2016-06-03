@@ -12,7 +12,7 @@
     </p>
     <h2>Step 1</h2>
     <p>
-        Obtain a copy of <a href="https://github.com/erasche/galactic-radio-telescope/blob/master/client/grt.py">the uploader script</a>.
+        Make sure you're on a branch of Galaxy with the uploader script. TODO.
     </p>
     <h2>Step 2</h2>
     <p>
@@ -22,9 +22,10 @@
 <pre style="color: black">
 #!/bin/bash
 # Invocation is python grt.py galaxy.ini &lt;INSTANCE_ID&gt; &lt;API_KEY&gt;
-python /path/to/grt.py /path/to/galaxy/conf/galaxy.ini {{ object.uuid }} {% if object.owner == request.user %}{{ object.api_key }}{% endif %}
+python /path/to/grt.py {{ object.uuid }} {% if object.owner == request.user %}{{ object.api_key }}{% endif %} -c /path/to/galaxy/conf/galaxy.ini
 </pre>
 
+    You can run the script with <code>--dry-run</code> beforehand, to see what data it will send.
     </p>
     <h2>Step 3</h2>
     <p>
@@ -35,9 +36,7 @@ python /path/to/grt.py /path/to/galaxy/conf/galaxy.ini {{ object.uuid }} {% if o
         <h4>Warning</h4>
         <p>
             You might consider subscribing to the <a href="https://github.com/erasche/galactic-radio-telescope">
-            GRT repository</a> as the GRT is a very new project. For instance
-            we have not yet selected an update mechanism, when we wish to
-            change the GRT script.
+            GRT repository</a> as the GRT is a very new project.
         </p>
     </div>
     <h2>Your Galaxy Instance</h2>
