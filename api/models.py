@@ -70,6 +70,13 @@ class GalaxyInstance(models.Model):
         return reverse_lazy('galaxy-instance-detail', kwargs={'slug': self.uuid})
 
     @property
+    def latest_users_total(self):
+        if self.users_total.count() > 0:
+            return [x.value for x in self.users_total.all().order_by('-date')[0:1]][0]
+        else:
+            return 0
+
+    @property
     def users_recent_data(self):
         if self.users_recent.count() > 0:
             return [x.value for x in self.users_recent.all().order_by('-date')[0:1]][0]

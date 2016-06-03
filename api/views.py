@@ -85,6 +85,8 @@ def v1_upload_data(request):
                 if tool_data[key] != sanitized_value:
                     log.warn("Sanitizied %s from %s to %s", key, tool_data[key], sanitized_value)
                 tool_data[key] = sanitized_value
+            else:
+                tool_data[key] = ""
 
         # Tool data is now theoretically safe.
         tool, tool_created = Tool.objects.get_or_create(**tool_data)
