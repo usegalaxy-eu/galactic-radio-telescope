@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block page_title %}GRT - Tool Directory{% endblock %}
+{% block body %}
+<div class="container">
+    <h1>Tools Across the Universe</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Version</th><th>Galaxies</th></tr>
+        </thead>
+        <tbody>
+        {% for tool in object_list %}
+            <tr>
+                <td><a href="{% url 'tool-detail' tool.id %}">{{ tool.tool_id }}</a></td>
+                <td>{{ tool.tool_name }}</td>
+                <td>{{ tool.tool_version }}</td>
+                <td>{{ tool.tool_description }}</td>
+                <td>{{ tool.instance_count }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

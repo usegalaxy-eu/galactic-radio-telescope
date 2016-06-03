@@ -25,6 +25,10 @@ class Tool(models.Model):
             if job.instance.public
         ])
 
+    @property
+    def instance_count(self):
+        return len(self.found_in)
+
 
 class IntegerDataPoint(models.Model):
     date = models.DateTimeField(auto_now_add=True)
@@ -76,6 +80,11 @@ class GalaxyInstance(models.Model):
     @property
     def jobs_run_data(self):
         return [x.value for x in self.jobs_run.all().order_by('-date')[0:5]]
+
+    @property
+    def tool_set(self):
+        tools = set([job.tool for job in self.job_set.all()])
+        return tools
 
 class Job(models.Model):
     ## Galaxy Instance

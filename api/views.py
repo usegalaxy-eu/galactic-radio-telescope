@@ -166,10 +166,6 @@ class GalaxyInstanceView(DetailView):
         context['recent_jobs'] = Job.objects.all().filter(instance=context['object']).order_by('-date')[0:10]
         return context
 
-class ToolView(DetailView):
-    model = Tool
-    slug_field = 'id'
-
 class GalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
@@ -179,3 +175,10 @@ class OwnedGalaxyInstanceListView(ListView):
     def get_queryset(self):
         print self.request.user
         return GalaxyInstance.objects.filter(owner=self.request.user)
+
+class ToolView(DetailView):
+    model = Tool
+    slug_field = 'id'
+
+class ToolList(ListView):
+    model = Tool

@@ -56,5 +56,11 @@
             {% endfor %}
         </tbody>
     </table>
+    <h2>Tools Available</h2>
+    <ul>
+        {% for tool in object.tool_set %}
+            <li><a href="{% url 'tool-detail' tool.id %}">{{ tool }}</a></li>
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}
