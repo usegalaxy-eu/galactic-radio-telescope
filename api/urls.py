@@ -1,10 +1,11 @@
 from django.conf.urls import url, patterns, include
 from django.views.generic import TemplateView
-from .views import stats_galaxy, stats_jobs, v1_upload_data
-from .views import GalaxyInstanceView
-from .views import GalaxyInstanceEdit
-from .views import GalaxyInstanceListView
-from .views import OwnedGalaxyInstanceListView
+from .views import stats_galaxy, stats_jobs, v1_upload_data, \
+    GalaxyInstanceView, \
+    GalaxyInstanceEdit, \
+    GalaxyInstanceListView, \
+    OwnedGalaxyInstanceListView, \
+    ToolView
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='base/home.html'), name='home'),
@@ -15,6 +16,8 @@ urlpatterns = [
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/edit$', GalaxyInstanceEdit.as_view(), name='galaxy-instance-edit'),
     url(r'^galaxy/owned$', OwnedGalaxyInstanceListView.as_view(), name='owned-galaxy-instance-list'),
+
+    url(r'^tool/(?P<pk>[0-9a-f-]{36})/$', ToolView.as_view(), name='tool-detail'),
     url(r'^api/v1/upload$', v1_upload_data, name='v1-upload'),
     url(r"^account/", include("account.urls")),
 ]

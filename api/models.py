@@ -8,12 +8,23 @@ import uuid as pyuuid
 
 class Tool(models.Model):
     """A single tool"""
+    id = models.UUIDField(primary_key=True, default=pyuuid.uuid4, editable=False)
+
     tool_id = models.CharField(max_length=128)
     tool_version = models.CharField(max_length=32)
     tool_name = models.CharField(max_length=64)
 
     def __str__(self):
         return '%s==%s' % (self.tool_id, self.tool_version)
+
+    @property
+    def found_in(self):
+        return set([
+            job.instance
+            for job in self.job_set.all()
+            if job.instance.public
+        ])
+
 
 class IntegerDataPoint(models.Model):
     date = models.DateTimeField(auto_now_add=True)
@@ -49,7 +60,7 @@ class GalaxyInstance(models.Model):
     api_key = models.UUIDField(default=pyuuid.uuid4, editable=False)
 
     def __str__(self):
-        return self.url
+        return '%s <%s>' % (self.humanname, self.url)
 
     def get_absolute_url(self):
         return reverse_lazy('galaxy-instance-detail', kwargs={'slug': self.uuid})

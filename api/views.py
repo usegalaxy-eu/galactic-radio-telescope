@@ -161,6 +161,15 @@ class GalaxyInstanceView(DetailView):
     model = GalaxyInstance
     slug_field = 'uuid'
 
+    def get_context_data(self, **kwargs):
+        context = super(GalaxyInstanceView, self).get_context_data(**kwargs)
+        context['recent_jobs'] = Job.objects.all().filter(instance=context['object']).order_by('-date')[0:10]
+        return context
+
+class ToolView(DetailView):
+    model = Tool
+    slug_field = 'id'
+
 class GalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
