@@ -1,6 +1,6 @@
 # Galactic Radio Telescope
 
-![GRT Logo](media/grt.png)
+![GRT Logo](media/grt-small.png)
 
 This is a project to collect metrics from Galaxy servers across the universe,
 and aggregate the data for statistical analysis.
