@@ -5,8 +5,8 @@ import random
 GRT_URL = 'http://localhost:8000/grt/api/v1/upload'
 payload = {
     'meta': {
-        'instance_uuid': '8bdea9afb91142ffb4e9eb8df3f4ee25',
-        'instance_api_key': '8bdea9afb91142ffb4e9eb8df3f4ee25',
+        'instance_uuid': '8bdea9af-b911-42ff-b4e9-eb8df3f4ee25',
+        'instance_api_key': '8bdea9af-b911-42ff-b4e9-eb8df3f4ee25',
         'total_users': 80,
         # Statistics are sent weekly.
         'active_users': random.randint(0, 80),

@@ -23,7 +23,7 @@ def v1_upload_data(request):
     """Accept uploaded data regarding jobs"""
     # Must be a POST
     if request.method != 'POST':
-        return HttpResponse(status=405)
+        return HttpResponse(content='Must be a POST', status=405)
 
     # Must be able to parse JSON. TODO: Limit request sizes?
     data = request.body
@@ -31,25 +31,26 @@ def v1_upload_data(request):
         data = json.loads(data)
     except Exception, e:
         # Bad request
-        return HttpResponse(status=400)
+        return HttpResponse(content='Unparseable data', status=400)
 
     metadata = data.get('meta', {})
 
     # Instance UUID must be available
     instance_uuid = metadata.get('instance_uuid', None)
     if instance_uuid is None:
-        return HttpResponse(status=400)
+        return HttpResponse('No instance UUID provided', status=400)
 
     instance = get_object_or_404(GalaxyInstance, uuid=instance_uuid)
 
     # Instance API key must be available
     instance_api_key = metadata.get('instance_api_key', None)
     if instance_api_key is None:
-        return HttpResponse(status=400)
+        return HttpResponse('No instance API key provided', status=400)
 
     # Instance API key must be correct.
     if not compare(str(instance_api_key), str(instance.api_key)):
-        return HttpResponse(status=400)
+        return HttpResponse(status=403)
+
 
     # First update Galaxy instance metadata
     instance_users_recent = IntegerDataPoint(value=metadata.get('active_users', 0))
@@ -64,9 +65,6 @@ def v1_upload_data(request):
     instance_jobs_run.save()
     instance.jobs_run.add(instance_jobs_run)
 
-    # instance.prepend_users_recent()
-    # instance.prepend_users_total(metadata.get('total_users', 0))
-    # instance.prepend_jobs_run(metadata.get('recent_jobs', 0))
     instance.save()
 
     tools = {}

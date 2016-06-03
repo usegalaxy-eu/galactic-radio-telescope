@@ -56,17 +56,15 @@ class GalaxyInstance(models.Model):
 
     @property
     def users_recent_data(self):
-        print [x.value for x in self.users_recent.all('-date')[0:5]]
-        print self.users_recent
-        return []
+        return [x.value for x in self.users_recent.all().order_by('-date')[0:5]]
 
     @property
     def users_total_data(self):
-        return [x.value for x in self.users_total.all('-date')[0:5]]
+        return [x.value for x in self.users_total.all().order_by('-date')[0:5]]
 
     @property
     def jobs_run_data(self):
-        return [x.value for x in self.jobs_run.all('-date')[0:5]]
+        return [x.value for x in self.jobs_run.all().order_by('-date')[0:5]]
 
 class Job(models.Model):
     ## Galaxy Instance
