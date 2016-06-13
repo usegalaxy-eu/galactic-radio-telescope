@@ -13,6 +13,8 @@ should answer questions like:
 > If I'm mapping a 32 Gb FastQ dataset against a 1Mbp genome, what are the
 > *likely* minimum/optimal compute requirements
 
+![GRT Screenshot](./media/grt-screenshot.png)
+
 ## Structure
 
 This repo will encompass a web service which aggregates data and eventually
