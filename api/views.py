@@ -207,7 +207,6 @@ class OwnedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
     def get_queryset(self):
-        print self.request.user
         return GalaxyInstance.objects.filter(owner=self.request.user)
 
 
