@@ -26,7 +26,7 @@ def v1_upload_data(request):
         return HttpResponse(content='Must be a POST', status=405)
 
     # Must be able to parse JSON. TODO: Limit request sizes?
-    data = request.body
+    data = (request.body).decode('utf-8')
     try:
         data = json.loads(data)
     except Exception as e:
