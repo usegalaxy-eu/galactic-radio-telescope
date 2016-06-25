@@ -1,20 +1,17 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.shortcuts import get_object_or_404, render
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db import transaction
-from django.db import transaction
-from .forms import ReportForm
 from .models import GalaxyInstance, Tool, Job, IntegerDataPoint
 import re
 import json
 import datetime
 import logging
 log = logging.getLogger(__name__)
-
 
 
 @transaction.atomic
@@ -154,10 +151,12 @@ def stats_jobs(request):
     }
     return render(request, 'base/galaxy-stats.html', data)
 
+
 class GalaxyInstanceEdit(UpdateView):
     model = GalaxyInstance
     slug_field = 'uuid'
     fields = ('url', 'humanname', 'description', 'public', 'owner')
+
 
 class GalaxyInstanceView(DetailView):
     model = GalaxyInstance
@@ -168,10 +167,19 @@ class GalaxyInstanceView(DetailView):
         context['recent_jobs'] = Job.objects.all().filter(instance=context['object']).order_by('-date')[0:10]
         return context
 
+
 class GalaxyInstanceCreateSuccess(DetailView):
     model = GalaxyInstance
     slug_field = 'uuid'
     template_name_suffix = '_create_success'
+
+    def get_context_data(self, **kwargs):
+        context = super(GalaxyInstanceCreateSuccess, self).get_context_data(**kwargs)
+        full_url = self.request.build_absolute_uri(str(reverse_lazy('galaxy-instance-create-success', args=(self.object.uuid, ))))
+        components = full_url.split('/')[0:-3] + ['api', 'v1', 'upload']
+        context['api_url'] = '/'.join(components)
+        return context
+
 
 class GalaxyInstanceCreate(CreateView):
     model = GalaxyInstance
@@ -194,18 +202,23 @@ class GalaxyInstanceCreate(CreateView):
 class GalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
+
 class OwnedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
     def get_queryset(self):
+        print self.request.user
         return GalaxyInstance.objects.filter(owner=self.request.user)
+
 
 class ToolView(DetailView):
     model = Tool
     slug_field = 'id'
 
+
 class ToolList(ListView):
     model = Tool
+
 
 def compare(val1, val2):
     """
@@ -224,5 +237,5 @@ def compare(val1, val2):
 
     result = 0
     for x, y in zip(val1, val2):
-        result |= x ^ y
+        result |= ord(x) ^ ord(y)
     return result == 0

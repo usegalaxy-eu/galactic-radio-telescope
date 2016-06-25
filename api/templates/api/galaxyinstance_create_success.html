@@ -22,7 +22,7 @@
 <pre style="color: black">
 #!/bin/bash
 # Invocation is python grt.py galaxy.ini &lt;INSTANCE_ID&gt; &lt;API_KEY&gt;
-python /path/to/grt.py {{ object.uuid }} {% if object.owner == request.user %}{{ object.api_key }}{% endif %} -c /path/to/galaxy/conf/galaxy.ini
+python scripts/grt.py {{ object.uuid }} {% if object.owner == request.user %}{{ object.api_key }}{% endif %} -c config/galaxy.ini --grt-url {{ api_url }}
 </pre>
 
     You can run the script with <code>--dry-run</code> beforehand, to see what data it will send.
