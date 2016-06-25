@@ -6,7 +6,6 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db import transaction
-from constant_time_compare import compare
 from django.db import transaction
 from .forms import ReportForm
 from .models import GalaxyInstance, Tool, Job, IntegerDataPoint
@@ -208,3 +207,23 @@ class ToolView(DetailView):
 
 class ToolList(ListView):
     model = Tool
+
+def compare(val1, val2):
+    """
+    Returns True if the two strings are equal, False otherwise.
+
+    The time taken is independent of the number of characters that match.
+
+    For the sake of simplicity, this function executes in constant time only
+    when the two strings have the same length. It short-circuits when they
+    have different lengths.
+
+    From http://www.levigross.com/2014/02/07/constant-time-comparison-functions-in...-python-haskell-clojure-and-java/
+    """
+    if len(val1) != len(val2):
+        return False
+
+    result = 0
+    for x, y in zip(val1, val2):
+        result |= x ^ y
+    return result == 0
