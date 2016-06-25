@@ -30,7 +30,7 @@ def v1_upload_data(request):
     data = request.body
     try:
         data = json.loads(data)
-    except Exception, e:
+    except Exception as e:
         # Bad request
         return HttpResponse(content='Unparseable data', status=400)
 
@@ -199,7 +199,6 @@ class OwnedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
     def get_queryset(self):
-        print self.request.user
         return GalaxyInstance.objects.filter(owner=self.request.user)
 
 class ToolView(DetailView):
