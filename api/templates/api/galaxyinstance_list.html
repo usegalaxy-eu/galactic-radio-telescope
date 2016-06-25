@@ -10,7 +10,7 @@
         </thead>
         <tbody>
         {% for galaxy in object_list %}
-            {% if galaxy.public %}
+            {% if galaxy.public or galaxy.owner == request.user or request.user.is_superuser %}
                 <tr>
                     <td>
                         <a href="{% url 'galaxy-instance-detail' galaxy.uuid %}">
