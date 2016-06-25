@@ -1,5 +1,6 @@
 from django.conf.urls import url, patterns, include
 from django.views.generic import TemplateView
+from django.contrib import admin
 from .views import stats_galaxy, stats_jobs, v1_upload_data, \
     GalaxyInstanceView, \
     GalaxyInstanceEdit, \
@@ -11,6 +12,7 @@ from .views import stats_galaxy, stats_jobs, v1_upload_data, \
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='base/home.html'), name='home'),
+    url(r'^admin/', include(admin.site.urls), name='admin'),
     url(r'^about.html', TemplateView.as_view(template_name='base/about.html')),
     url(r'^stats/galaxy/$', stats_galaxy, name='stats-galaxy'),
     url(r'^stats/jobs/$', stats_jobs, name='stats-jobs'),
@@ -26,4 +28,5 @@ urlpatterns = [
 
     url(r'^api/v1/upload$', v1_upload_data, name='v1-upload'),
     url(r"^account/", include("account.urls")),
+
 ]
