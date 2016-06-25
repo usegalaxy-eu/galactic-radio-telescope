@@ -34,6 +34,7 @@ class IntegerDataPoint(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     value = models.IntegerField(default=0)
 
+
 class GalaxyInstance(models.Model):
     """A single galaxy site. Corresponds to a single galaxy.ini"""
     # uuid = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -102,6 +103,7 @@ class GalaxyInstance(models.Model):
         tools = set([job.tool for job in self.job_set.all()])
         return tools
 
+
 class Job(models.Model):
     ## Galaxy Instance
     instance = models.ForeignKey(GalaxyInstance)
@@ -113,6 +115,9 @@ class Job(models.Model):
     date = models.DateTimeField(null=True, blank=True)
     # Tool params
     params = JSONField()
+
+    class Meta:
+        unique_together = ('instance', 'tool', 'date')
 
     # Metrics/collectl
     metrics_core_runtime_seconds = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)

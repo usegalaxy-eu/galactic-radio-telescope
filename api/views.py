@@ -6,6 +6,9 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db import transaction
+from django.core.paginator import Paginator
+from django.core.paginator import EmptyPage
+from django.core.paginator import PageNotAnInteger
 from .models import GalaxyInstance, Tool, Job, IntegerDataPoint
 import re
 import json
@@ -217,6 +220,23 @@ class ToolView(DetailView):
 
 class ToolList(ListView):
     model = Tool
+
+
+    def get_context_data(self, **kwargs):
+        context = super(ToolList, self).get_context_data(**kwargs)
+        paginator = Paginator(self.object_list, 5)
+
+        page = self.request.GET.get('page')
+
+        try:
+            page_objects = paginator.page(page)
+        except PageNotAnInteger:
+            page_objects = paginator.page(1)
+        except EmptyPage:
+            page_objects = paginator.page(paginator.num_pages)
+
+        context['objects'] = page_objects
+        return context
 
 
 def compare(val1, val2):
