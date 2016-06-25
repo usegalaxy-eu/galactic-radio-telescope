@@ -110,7 +110,7 @@ def v1_upload_data(request):
             tool=tool,
             date=datetime.datetime.fromtimestamp(job_date),
             metrics_core_runtime_seconds=int(metrics.get('core_runtime_seconds', 0)),
-            metrics_cpuinfo_cores_allocated=int(metrics.get('cpuinfo_cores_allocated', 0)),
+            metrics_core_galaxy_slots=int(metrics.get('core_galaxy_slots', 0)),
         )
         job.save()
 

@@ -123,4 +123,4 @@ class Job(models.Model):
     metrics_core_runtime_seconds = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
     metrics_meminfo_swaptotal = models.IntegerField(blank=True, null=True)
     metrics_meminfo_memtotal = models.IntegerField(blank=True, null=True)
-    metrics_cpuinfo_cores_allocated = models.IntegerField(default=0)
+    metrics_core_galaxy_slots = models.IntegerField(default=0)
