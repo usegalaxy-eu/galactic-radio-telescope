@@ -103,6 +103,9 @@ class GalaxyInstance(models.Model):
         tools = set([job.tool for job in self.job_set.all()])
         return tools
 
+    @property
+    def tool_set_size(self):
+        return len(self.tool_set)
 
 class Job(models.Model):
     ## Galaxy Instance

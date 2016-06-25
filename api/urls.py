@@ -1,4 +1,4 @@
-from django.conf.urls import url, patterns, include
+from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.contrib import admin
 from .views import stats_galaxy, stats_jobs, v1_upload_data, \
@@ -7,6 +7,7 @@ from .views import stats_galaxy, stats_jobs, v1_upload_data, \
     GalaxyInstanceCreate, \
     GalaxyInstanceCreateSuccess, \
     GalaxyInstanceListView, \
+    GalaxyInstanceListCompareView, \
     OwnedGalaxyInstanceListView, \
     ToolView, ToolList
 
@@ -17,6 +18,7 @@ urlpatterns = [
     url(r'^stats/galaxy/$', stats_galaxy, name='stats-galaxy'),
     url(r'^stats/jobs/$', stats_jobs, name='stats-jobs'),
     url(r'^galaxy/$', GalaxyInstanceListView.as_view(), name='galaxy-instance-list'),
+    url(r'^galaxy/compare$', GalaxyInstanceListCompareView.as_view(), name='galaxy-instance-list-compare'),
     url(r'^galaxy/create$', GalaxyInstanceCreate.as_view(), name='galaxy-instance-create'),
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/edit$', GalaxyInstanceEdit.as_view(), name='galaxy-instance-edit'),

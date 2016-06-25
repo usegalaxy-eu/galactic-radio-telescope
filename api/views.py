@@ -206,6 +206,11 @@ class GalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
 
+class GalaxyInstanceListCompareView(ListView):
+    model = GalaxyInstance
+    template_name_suffix = '_list_compare'
+
+
 class OwnedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
