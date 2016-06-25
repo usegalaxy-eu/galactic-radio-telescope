@@ -57,6 +57,7 @@ class GalaxyInstance(models.Model):
 
     # Tools installed on the server. This will allow searching through all
     # Galaxies for a particular tool.
+    # tool_counts = models.ManyToManyField(IntegerDataPoint, related_name='tools_recent_data', blank=True)
     tools = models.ManyToManyField(Tool, blank=True)
 
     # Owner of this Galaxy instance
@@ -108,13 +109,12 @@ class GalaxyInstance(models.Model):
     def tool_set_size(self):
         return len(self.tool_set)
 
-    @property
-    def jobs_run_week(self):
-        return self.job_set.filter(date__gt=datetime.date.today() - datetime.timedelta(days=7)).all().count
+    def spark_users(self):
+        return ','.join([str(x.value) for x in self.users_recent.all().order_by('-date')[0:10]])
 
-    @property
-    def jobs_run_month(self):
-        return self.job_set.filter(date__gt=datetime.date.today() - datetime.timedelta(days=30)).all().count
+    def spark_jobs(self):
+        return ','.join([str(x.value) for x in self.jobs_run.all().order_by('-date')[0:10]])
+
 
 class Job(models.Model):
     ## Galaxy Instance
