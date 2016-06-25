@@ -116,9 +116,6 @@ class Job(models.Model):
     # Tool params
     params = JSONField()
 
-    class Meta:
-        unique_together = ('instance', 'tool', 'date')
-
     # Metrics/collectl
     metrics_core_runtime_seconds = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
     metrics_meminfo_swaptotal = models.IntegerField(blank=True, null=True)
