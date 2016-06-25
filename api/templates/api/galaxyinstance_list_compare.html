@@ -29,7 +29,13 @@
         </tbody>
     </table>
     <script type="text/javascript">
-$('.sparkline').sparkline();
+$('.sparkline').sparkline('html', {width: '100px'});
     </script>
+    <style type="text/css">
+.jqstooltip{
+    width: 5em;
+    height: 4em;
+}
+    </style>
 </div>
 {% endblock %}
