@@ -3,6 +3,7 @@ from django.db import models
 from jsonfield import JSONField
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
+import datetime
 import uuid as pyuuid
 
 
@@ -106,6 +107,14 @@ class GalaxyInstance(models.Model):
     @property
     def tool_set_size(self):
         return len(self.tool_set)
+
+    @property
+    def jobs_run_week(self):
+        return self.job_set.filter(date__gt=datetime.date.today() - datetime.timedelta(days=7)).all().count
+
+    @property
+    def jobs_run_month(self):
+        return self.job_set.filter(date__gt=datetime.date.today() - datetime.timedelta(days=30)).all().count
 
 class Job(models.Model):
     ## Galaxy Instance

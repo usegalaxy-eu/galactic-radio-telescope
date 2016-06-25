@@ -11,6 +11,8 @@
                 <th>Total Users</th>
                 <th>Recent Users</th>
                 <th>Tools</th>
+                <th>Jobs Run (Week)</th>
+                <th>Jobs Run (Month)</th>
             </tr>
         </thead>
         <tbody>
@@ -25,6 +27,8 @@
                     <td>{{ galaxy.latest_users_total }}</td>
                     <td>{{ galaxy.users_recent_data }}</td>
                     <td>{{ galaxy.tool_set_size }}</td>
+                    <td>{{ galaxy.jobs_run_week }}</td>
+                    <td>{{ galaxy.jobs_run_month }}</td>
                 </tr>
             {% endif %}
         {% endfor %}
