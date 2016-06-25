@@ -4,4 +4,3 @@ django-bootstrap3
 jsonfield
 django-user-accounts
 django-fontawesome
-constant_time_compare
