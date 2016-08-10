@@ -1,28 +1,65 @@
 {% extends "base.html" %}
+{% load fontawesome %}
 
 {% block page_title %}Galactic Radio Telescope - Directory{% endblock %}
 {% block body %}
+<style type="text/css">
+.card {
+    border: 1px solid #aaaaaa;
+    padding: 0px;
+    margin: 1em;
+    min-height: 15em;
+    position: relative;
+}
+.card .card-title{
+    width: 100%;
+    background: #18bc9c;
+    color: white;
+    margin: 0px;
+    padding: .9em;
+}
+
+.card-title h3{
+    margin: 0px;
+}
+
+.card-content{
+    padding: 1em;
+}
+
+.card-footer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 0.5em;
+    background: #eeeeee;
+}
+</style>
+
 <div class="container">
     <h1>Galaxy Directory</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr><th>Name</th><th>Description</th><th>Users</th></tr>
-        </thead>
-        <tbody>
-        {% for galaxy in object_list %}
-            {% if galaxy.public or galaxy.owner == request.user or request.user.is_superuser %}
-                <tr>
-                    <td>
-                        <a href="{% url 'galaxy-instance-detail' galaxy.uuid %}">
-                            {{ galaxy.humanname }}
-                        </a>
-                    </td>
-                    <td>{{ galaxy.description }}</td>
-                    <td>{{ galaxy.norm_users_recent }}</td>
-                </tr>
-            {% endif %}
-        {% endfor %}
-        </tbody>
-    </table>
+    {% if slug%}
+    Galaxies tagged <code>{{ slug }}</code>
+    {% endif %}
+    <div class="row">
+    {% for galaxy in object_list %}
+        {% if galaxy.public or galaxy.owner == request.user or request.user.is_superuser %}
+        <a href="{% url 'galaxy-instance-detail' galaxy.uuid %}">
+        <div class="col-md-3 card">
+            <div class="card-title">
+                <h3>{{ galaxy.humanname }}</h3>
+            </div>
+            <div class="card-content">
+                <p>{{ galaxy.description }}</p>
+            </div>
+            <div class="card-footer">
+                {{ galaxy.norm_users_recent }} {% fontawesome_icon 'user' %}
+
+            </div>
+        </div>
+        </a>
+        {% endif %}
+    {% endfor %}
+    </div>
 </div>
 {% endblock %}

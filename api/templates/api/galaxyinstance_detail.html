@@ -4,6 +4,15 @@
 {% block page_title %}Galactic Radio Telescope - Instance{% endblock %}
 
 {% block body %}
+<style type="text/css">
+a.tag {
+    text-decoration: none;
+    background: #eeeeee;
+    padding: .4em;
+    margin: .2em;
+    color: #2c3e50;
+}
+</style>
 <div class="container">
     <h1>{{ object.humanname }}
         {% if object.owner == request.user %}
@@ -28,6 +37,17 @@
                     <tr><td>Users - Recent</td><td>{{ object.users_recent_data }}</td></tr>
                     <tr><td>Users - Total</td><td>{{ object.users_total_data }}</td></tr>
                     <tr><td>Jobs Run - Recent</td><td>{{ object.jobs_run_data }}</td></tr>
+
+                    <tr>
+                        <td>Tags</td>
+                        <td>
+                            {% for tag in object.tags.all %}
+                            <a class="tag" href="{% url 'tagged-galaxy-instance-list' tag.name %}">
+                            {{ tag }}
+                            </a>
+                            {% endfor %}
+                        </td></tr>
+                    <tr><td>Location</td><td>{{ object.latitude }}, {{ object.longitude }}</td></tr>
                 </tbody>
             </table>
         {% else %}

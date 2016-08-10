@@ -6,13 +6,11 @@ from django.contrib.auth.models import User
 import tagulous
 import uuid as pyuuid
 
-
 class Tool(models.Model):
     """A single tool"""
     id = models.UUIDField(primary_key=True, default=pyuuid.uuid4, editable=False)
 
     tool_id = models.CharField(max_length=128)
-    tool_version = models.CharField(max_length=32)
     tool_name = models.CharField(max_length=64)
 
     def __str__(self):
@@ -29,6 +27,15 @@ class Tool(models.Model):
     @property
     def instance_count(self):
         return len(self.found_in)
+
+
+class ToolVersion(models.Model):
+    """A version of a single tool"""
+    tool = models.ForeignKey(Tool)
+    version = models.CharField(max_length=32)
+
+    def __str__(self):
+        return '%s==%s' % (self.tool.tool_id, self.version)
 
 
 class IntegerDataPoint(models.Model):
@@ -128,6 +135,9 @@ class Job(models.Model):
 
     ## Tool
     tool = models.ForeignKey(Tool)
+    # These are normalized to help with queries.
+    tool_name = models.CharField(max_length=64)
+    tool_version = models.CharField(max_length=64)
 
     ## Run Information
     date = models.DateTimeField(null=True, blank=True)

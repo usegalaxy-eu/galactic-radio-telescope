@@ -128,44 +128,6 @@ def v1_upload_data(request):
     return HttpResponse(status=200)
 
 
-def stats_galaxy(request):
-    userdata = {
-        'x': ['<10', '10-49', '50-99', '100-199', '200-499', '500+'],
-        'y1': [7, 8, 4, 4, 1, 1],
-    }
-    computedata = {
-        'x': ['Standalone server', 'Compute cluster', 'Cloud'],
-        'y1': [12, 10, 4],
-    }
-    storagedata = {
-        'x': [x + ' Tb' for x in ['<10', '10-49', '50-99', '100-199', '200-299']],
-        'y1': [8, 7, 4, 1, 4],
-    }
-    data = {
-        'usertype': 'discreteBarChart',
-        'userdata': userdata,
-        'computetype': 'discreteBarChart',
-        'computedata': computedata,
-        'storagetype': 'discreteBarChart',
-        'storagedata': storagedata,
-    }
-    return render(request, 'base/galaxy-stats.html', data)
-
-
-def stats_jobs(request):
-    xdata = ['0-10', '10-50', '50-100', '100-1000', '1000+']
-    ydata = [1000, 200, 50, 10, 2]
-    chartdata = {
-        'x': xdata,
-        'y1': ydata,
-    }
-    data = {
-        'charttype': 'discreteBarChart',
-        'chartdata': chartdata,
-    }
-    return render(request, 'base/galaxy-stats.html', data)
-
-
 class GalaxyInstanceEdit(UpdateView):
     model = GalaxyInstance
     slug_field = 'uuid'
@@ -179,20 +141,6 @@ class GalaxyInstanceView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(GalaxyInstanceView, self).get_context_data(**kwargs)
         context['recent_jobs'] = Job.objects.all().filter(instance=context['object']).order_by('-date')[0:10]
-
-        tools = Job.objects.all().filter(instance=context['object']).values('tool__tool_id', 'tool__id')
-
-        tool_id_map = {
-            x['tool__tool_id']: x['tool__id'] for x in tools
-        }
-
-        tools_names = [x['tool__tool_id'] for x in tools]
-        top_tools = Counter(tools_names)
-        context['top_tools'] = [
-            (k, v, tool_id_map[k])
-            for (k, v) in top_tools.most_common(10)
-        ]
-
         return context
 
 
@@ -231,10 +179,18 @@ class GalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
 
-class GalaxyInstanceListCompareView(ListView):
+class TaggedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
-    template_name_suffix = '_list_compare'
+    template_name_suffix = '_list'
 
+    def get_context_data(self, **kwargs):
+        context = super(TaggedGalaxyInstanceListView, self).get_context_data(**kwargs)
+        context['slug'] = self.kwargs['slug']
+        import pprint; pprint.pprint(context)
+        return context
+
+    def get_queryset(self):
+        return GalaxyInstance.objects.filter(tags=self.kwargs['slug'])
 
 class OwnedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
