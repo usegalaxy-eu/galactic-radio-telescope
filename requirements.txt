@@ -4,3 +4,4 @@ django-bootstrap3
 jsonfield
 django-user-accounts
 django-fontawesome
+django-rest-framework

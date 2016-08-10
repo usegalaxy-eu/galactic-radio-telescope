@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'bootstrap_themes',
     'django.contrib.sites',
     'tagulous',
+    'rest_framework'
     'fontawesome',
     'bootstrap3',
     'account',
