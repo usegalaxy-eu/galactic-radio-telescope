@@ -8,6 +8,13 @@
     <h1>Register a Galaxy</h1>
     <div class="row">
         <div class="col-md-12">
+
+            <div class="alert alert-info">
+                <h4>Requirements</h4>
+                <p>
+                    You must be running a version of Galaxy &gt;= 16.10 to use the Galactic Radio Telescope.
+                </p>
+            </div>
             <form method="post">
                 {% csrf_token %}
                 {% bootstrap_form form %}

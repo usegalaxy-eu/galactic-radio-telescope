@@ -12,7 +12,57 @@
     </p>
     <h2>Step 1</h2>
     <p>
-        Make sure you're on a branch of Galaxy with the uploader script. TODO.
+        Download your configuration file to
+        <code>$GALAXY_ROOT/scripts/grt.yml</code>, and consider customising the
+        tags and the location sharing feature, if you wish to opt-in.
+<pre style="color: black">
+galaxy_config: config/galaxy.ini
+grt_server:
+    ## URL to your GRT server
+    grt_url: https://telescope.galaxyproject.org/api/v1/upload
+    ## An instance ID uniquely identifies your Galaxy instance
+    instance_id: "{{ object.uuid }}"
+    ## An API key is required to submit data to GRT
+    api_key: "{% if object.owner == request.user %}{{ object.api_key }}{% endif %}"
+
+## The public name and description of your Galaxy instance
+instance:
+    ## The publicly accessible URL of your galaxy instance. E.g. https://fqdn/galaxy
+    url: "{{ object.url }}"
+    name: "{{ object.humanname }}"
+    description: |
+        {{ object.description }}
+    tags:
+        #- public
+        - private
+        ## If this is a cloudlaunch server, you could indicate that here
+        #- cloudlaunch
+        ## If you wish to share what infrastucture you're running on, there are
+        #tags for this:
+        #- infra/aws
+        #- infra/gcp
+        #- infra/azure
+        #- infra/other_cloud
+        #- infra/private
+        ## Additionally if you wish to share a bit about your job runners we
+        #would be interested to hear who is using which runners.
+        #- cluster/condor
+        #- cluster/slurm
+
+location:
+    # If autodetect is set to true, then an attempt will be made to
+    # automatically detect your location using a third party service
+    # (http://ip-api.com, https://icanhazip.com).
+    autodetect: false
+    # If you still wish to share the location of your Galaxy server
+    # (great for helping people find local resources for Galaxy)
+    latitude: 0
+    longitude: 0
+
+tool_blacklist:
+  - __SET_METADATA__
+  - upload1
+</pre>
     </p>
     <h2>Step 2</h2>
     <p>
@@ -21,8 +71,7 @@
         <code>/etc/cron.weekly</code>, and <code>chmod +x</code>ing it.
 <pre style="color: black">
 #!/bin/bash
-# Invocation is python grt.py galaxy.ini &lt;INSTANCE_ID&gt; &lt;API_KEY&gt;
-python scripts/grt.py {{ object.uuid }} {% if object.owner == request.user %}{{ object.api_key }}{% endif %} -c config/galaxy.ini --grt-url {{ api_url }}
+python $GALAXY_ROOT/scripts/grt.py -c $GALAXY_ROOT/config/galaxy.ini
 </pre>
 
     You can run the script with <code>--dry-run</code> beforehand, to see what data it will send.

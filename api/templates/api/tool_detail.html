@@ -9,30 +9,22 @@
     <p>
         <u>{{ object.tool_name }}</u>&nbsp;{{ object.tool_description }}
     </p>
-    <h2>Found In</h2>
-    <p>
-        <ul>
-            {% for galaxy in object.found_in %}
-            <li>
-                <a href="{% url 'galaxy-instance-detail' galaxy.uuid %}">
-                    {{ galaxy }}
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-    </p>
     <h2>Job Run Data</h2>
+    {% for tool_version in object.toolversion_set.all %}
+    <h3>Version {{ tool_version.version }}</h3>
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Galaxy</th>
                 <th>Date</th>
                 <th>Runtime</th>
                 <th>Cores Allocated</th>
             </tr>
         </thead>
         <tbody>
-            {% for job in object.job_set.all %}
+            {% for job in tool_version.job_set.all|slice:":10" %}
             <tr>
+                <td><a href="{% url 'galaxy-instance-detail' job.instance.uuid %}">{{ job.instance.humanname }}</a></td>
                 <td>{{ job.date }}</td>
                 <td>{{ job.metrics_core_runtime_seconds }}</td>
                 <td>{{ job.metrics_core_galaxy_slots }}</td>
@@ -40,5 +32,6 @@
             {% endfor %}
         </tbody>
     </table>
+    {% endfor %}
 </div>
 {% endblock %}

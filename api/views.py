@@ -9,7 +9,8 @@ from django.db import transaction
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
-from .models import GalaxyInstance, Tool, Job, IntegerDataPoint
+from django.utils import timezone
+from .models import GalaxyInstance, Tool, ToolVersion, Job, IntegerDataPoint
 import re
 import json
 import datetime
@@ -102,8 +103,16 @@ def v1_upload_data(request):
                 tool_data[key] = ""
 
         # Tool data is now theoretically safe.
-        tool, tool_created = Tool.objects.get_or_create(**tool_data)
-        tools[idx] = tool
+        tool, tool_created = Tool.objects.get_or_create(
+            tool_id=tool_data['tool_id'],
+            tool_name=tool_data['tool_name']
+        )
+        tool_version, tv_created = ToolVersion.objects.get_or_create(
+            tool=tool,
+            version=tool_data['tool_version']
+        )
+
+        tools[idx] = tool_version
 
     # Now we need to process the list of new jobs sent to us by the
     # client.
@@ -122,7 +131,10 @@ def v1_upload_data(request):
         job = Job(
             instance=instance,
             tool=tool,
-            date=datetime.datetime.fromtimestamp(job_date),
+            date=timezone.make_aware(
+                datetime.datetime.fromtimestamp(job_date),
+                timezone.UTC
+            ),
             metrics_core_runtime_seconds=int(metrics.get('core_runtime_seconds', 0)),
             metrics_core_galaxy_slots=int(metrics.get('core_galaxy_slots', 0)),
         )
@@ -211,10 +223,9 @@ class ToolView(DetailView):
 class ToolList(ListView):
     model = Tool
 
-
     def get_context_data(self, **kwargs):
         context = super(ToolList, self).get_context_data(**kwargs)
-        paginator = Paginator(self.object_list, 5)
+        paginator = Paginator(self.object_list, 25)
 
         page = self.request.GET.get('page')
 

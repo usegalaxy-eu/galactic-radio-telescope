@@ -17,6 +17,21 @@ class Tool(models.Model):
         return '%s [%s]' % (self.tool_id, self.tool_name)
 
     @property
+    def instance_count(self):
+        return set([tv.found_in() for tv in self.toolversion_set.all()])
+
+class ToolVersion(models.Model):
+    """A version of a single tool"""
+    tool = models.ForeignKey(Tool)
+    version = models.CharField(max_length=32)
+
+    class Meta:
+        ordering = ('-version', )
+
+    def __str__(self):
+        return '%s==%s' % (self.tool.tool_id, self.version)
+
+    @property
     def found_in(self):
         return set([
             job.instance
@@ -28,14 +43,6 @@ class Tool(models.Model):
     def instance_count(self):
         return len(self.found_in)
 
-
-class ToolVersion(models.Model):
-    """A version of a single tool"""
-    tool = models.ForeignKey(Tool)
-    version = models.CharField(max_length=32)
-
-    def __str__(self):
-        return '%s==%s' % (self.tool.tool_id, self.version)
 
 
 class IntegerDataPoint(models.Model):
@@ -134,7 +141,7 @@ class Job(models.Model):
     instance = models.ForeignKey(GalaxyInstance)
 
     ## Tool
-    tool = models.ForeignKey(Tool)
+    tool = models.ForeignKey(ToolVersion)
     # These are normalized to help with queries.
     tool_name = models.CharField(max_length=64)
     tool_version = models.CharField(max_length=64)
