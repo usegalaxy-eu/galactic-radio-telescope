@@ -6,3 +6,4 @@ django-user-accounts
 django-fontawesome
 djangorestframework
 raven
+django-tagulous
