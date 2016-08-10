@@ -25,6 +25,41 @@ a.tag {
         <p>
             {{ object.description }}
         </p>
+
+    {% if object.latitude != 0 and object.longitude != 0 %}
+    <div id="map" class="map"></div>
+    <script type="text/javascript">
+        var pt = ol.proj.fromLonLat([{{object.longitude | safe}}, {{object.latitude | safe}}]);
+
+        var feature = new ol.Feature({
+            geometry: new ol.geom.Point(pt)
+        });
+
+        var source = new ol.source.Vector({
+            features: [feature]
+        });
+
+        var vectorLayer = new ol.layer.Vector({
+            source: source
+        });
+
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                }),
+                vectorLayer,
+            ],
+            view: new ol.View({
+                center: pt,
+                zoom: 6
+            })
+        });
+    </script>
+    {% endif %}
+
+
     </div>
     <div class="col-md-8">
         {% if object.public or object.owner == request.user %}
@@ -46,19 +81,13 @@ a.tag {
                             {{ tag }}
                             </a>
                             {% endfor %}
-                        </td></tr>
-                    <tr><td>Location</td><td>{{ object.latitude }}, {{ object.longitude }}</td></tr>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         {% else %}
             <p>This Galaxy instance has elected to keep their data private</p>
         {% endif %}
     </div>
-    <h2>Top Tools</h2>
-    <ul>
-        {% for tool in top_tools %}
-        <li><a href="{% url 'tool-detail' tool.2 %}">{{ tool.0 }} {{ tool.1 }}</a></li>
-        {% endfor %}
-    </ul>
 </div>
 {% endblock %}

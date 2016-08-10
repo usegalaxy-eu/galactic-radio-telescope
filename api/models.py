@@ -14,7 +14,7 @@ class Tool(models.Model):
     tool_name = models.CharField(max_length=64)
 
     def __str__(self):
-        return '%s==%s' % (self.tool_id, self.tool_version)
+        return '%s [%s]' % (self.tool_id, self.tool_name)
 
     @property
     def found_in(self):

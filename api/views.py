@@ -192,6 +192,7 @@ class TaggedGalaxyInstanceListView(ListView):
     def get_queryset(self):
         return GalaxyInstance.objects.filter(tags=self.kwargs['slug'])
 
+
 class OwnedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
