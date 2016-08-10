@@ -3,7 +3,7 @@ from django.db import models
 from jsonfield import JSONField
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
-import datetime
+import tagulous
 import uuid as pyuuid
 
 
@@ -59,6 +59,8 @@ class GalaxyInstance(models.Model):
     # Galaxies for a particular tool.
     # tool_counts = models.ManyToManyField(IntegerDataPoint, related_name='tools_recent_data', blank=True)
     tools = models.ManyToManyField(Tool, blank=True)
+
+    tags = tagulous.models.TagField()
 
     # Owner of this Galaxy instance
     owner = models.ForeignKey(User)

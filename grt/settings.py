@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap_themes',
     'django.contrib.sites',
+    'tagulous',
     'fontawesome',
     'bootstrap3',
     'account',
@@ -140,3 +141,10 @@ ACCOUNT_PASSWORD_CHANGE_REDIRECT_URL = '/grt/'
 ACCOUNT_PASSWORD_RESET_REDIRECT_URL = '/grt/'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/grt/'
 ACCOUNT_SETTINGS_REDIRECT_URL = '/grt/'
+
+SERIALIZATION_MODULES = {
+    'xml':    'tagulous.serializers.xml_serializer',
+    'json':   'tagulous.serializers.json',
+    'python': 'tagulous.serializers.python',
+    'yaml':   'tagulous.serializers.pyyaml',
+}
