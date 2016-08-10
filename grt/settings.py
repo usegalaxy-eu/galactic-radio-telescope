@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'tagulous',
     'debug_toolbar',
     'rest_framework',
+    'raven.contrib.django.raven_compat',
     'fontawesome',
     'bootstrap3',
     'account',
@@ -150,3 +151,10 @@ SERIALIZATION_MODULES = {
     'python': 'tagulous.serializers.python',
     'yaml':   'tagulous.serializers.pyyaml',
 }
+
+if 'RAVEN_DSN' in os.environ:
+    RAVEN_CONFIG = {
+        'dsn': os.environ['RAVEN_DSN']
+    }
+else:
+    RAVEN_CONFIG = {}
