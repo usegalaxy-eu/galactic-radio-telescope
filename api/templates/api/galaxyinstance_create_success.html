@@ -33,8 +33,13 @@ instance:
     description: |
         {{ object.description }}
     tags:
+        {% if object.public %}
+        - public
+        #- private
+        {% else %}
         #- public
         - private
+        {% endif %}
         ## If this is a cloudlaunch server, you could indicate that here
         #- cloudlaunch
         ## If you wish to share what infrastucture you're running on, there are
