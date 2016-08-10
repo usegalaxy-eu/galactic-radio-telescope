@@ -55,6 +55,10 @@ class GalaxyInstance(models.Model):
     # Aggregate Job Data
     jobs_run = models.ManyToManyField(IntegerDataPoint, related_name='job_recent_data', blank=True)
 
+    norm_users_recent = models.IntegerField(default=0)
+
+    latitude = models.FloatField(default=0)
+    longitude = models.FloatField(default=0)
     # Tools installed on the server. This will allow searching through all
     # Galaxies for a particular tool.
     # tool_counts = models.ManyToManyField(IntegerDataPoint, related_name='tools_recent_data', blank=True)

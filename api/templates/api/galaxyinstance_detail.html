@@ -34,10 +34,10 @@
             <p>This Galaxy instance has elected to keep their data private</p>
         {% endif %}
     </div>
-    <h2>Tools Available</h2>
+    <h2>Top Tools</h2>
     <ul>
-        {% for tool in object.tool_set %}
-            <li><a href="{% url 'tool-detail' tool.id %}">{{ tool }}</a></li>
+        {% for tool in top_tools %}
+        <li><a href="{% url 'tool-detail' tool.2 %}">{{ tool.0 }} {{ tool.1 }}</a></li>
         {% endfor %}
     </ul>
 </div>

@@ -10,6 +10,7 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from .models import GalaxyInstance, Tool, Job, IntegerDataPoint
+from collections import Counter
 import re
 import json
 import datetime
@@ -69,7 +70,11 @@ def v1_upload_data(request):
     instance.tags = metadata.get('tags', [])
     instance.description = metadata.get('description', '').strip()
     instance.humanname = metadata.get('name', 'A Galaxy Instance')
-    # instance.location =
+    instance.norm_users_recent = metadata.get('active_users', 0)
+
+    location = metadata.get('location', {'lat': 0, 'lon': 0})
+    instance.latitude = location.get('lat', 0)
+    instance.longitude = location.get('lon', 0)
 
     instance.save()
 
@@ -174,6 +179,20 @@ class GalaxyInstanceView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(GalaxyInstanceView, self).get_context_data(**kwargs)
         context['recent_jobs'] = Job.objects.all().filter(instance=context['object']).order_by('-date')[0:10]
+
+        tools = Job.objects.all().filter(instance=context['object']).values('tool__tool_id', 'tool__id')
+
+        tool_id_map = {
+            x['tool__tool_id']: x['tool__id'] for x in tools
+        }
+
+        tools_names = [x['tool__tool_id'] for x in tools]
+        top_tools = Counter(tools_names)
+        context['top_tools'] = [
+            (k, v, tool_id_map[k])
+            for (k, v) in top_tools.most_common(10)
+        ]
+
         return context
 
 
