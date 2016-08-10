@@ -9,7 +9,6 @@ from django.db import transaction
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
-from django.utils import timezone
 from .models import GalaxyInstance, Tool, ToolVersion, Job, IntegerDataPoint
 import re
 import json
@@ -68,6 +67,10 @@ def v1_upload_data(request):
 
     instance.version = metadata.get('galaxy_version', 'Unknown')
     instance.tags = metadata.get('tags', [])
+    if 'public' in instance.tags:
+        instance.public = True
+    else:
+        instance.public = False
     instance.description = metadata.get('description', '').strip()
     instance.humanname = metadata.get('name', 'A Galaxy Instance')
     if len(metadata.get('url', '').strip()) > 0:
@@ -131,10 +134,7 @@ def v1_upload_data(request):
         job = Job(
             instance=instance,
             tool=tool,
-            date=timezone.make_aware(
-                datetime.datetime.fromtimestamp(job_date),
-                timezone.UTC
-            ),
+            date=datetime.datetime.fromtimestamp(job_date),
             metrics_core_runtime_seconds=int(metrics.get('core_runtime_seconds', 0)),
             metrics_core_galaxy_slots=int(metrics.get('core_galaxy_slots', 0)),
         )
