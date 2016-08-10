@@ -1,7 +1,7 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
@@ -10,7 +10,6 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from .models import GalaxyInstance, Tool, Job, IntegerDataPoint
-from collections import Counter
 import re
 import json
 import datetime
@@ -70,6 +69,10 @@ def v1_upload_data(request):
     instance.tags = metadata.get('tags', [])
     instance.description = metadata.get('description', '').strip()
     instance.humanname = metadata.get('name', 'A Galaxy Instance')
+    if len(metadata.get('url', '').strip()) > 0:
+        instance.url = metadata['url']
+    else:
+        instance.url = None
     instance.norm_users_recent = metadata.get('active_users', 0)
 
     location = metadata.get('location', {'lat': 0, 'lon': 0})
@@ -131,7 +134,7 @@ def v1_upload_data(request):
 class GalaxyInstanceEdit(UpdateView):
     model = GalaxyInstance
     slug_field = 'uuid'
-    fields = ('url', 'humanname', 'description', 'public', 'owner')
+    fields = ('url',)
 
 
 class GalaxyInstanceView(DetailView):

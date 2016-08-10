@@ -14,13 +14,7 @@ a.tag {
 }
 </style>
 <div class="container">
-    <h1>{{ object.humanname }}
-        {% if object.owner == request.user %}
-        <a href="{% url 'galaxy-instance-edit' object.uuid %}">
-            {% fontawesome_icon 'pencil' %}
-        </a>
-        {% endif %}
-    </h1>
+    <h1>{{ object.humanname }}</h1>
     <div class="col-md-4">
         <p>
             {{ object.description }}
@@ -67,6 +61,7 @@ a.tag {
                 <tbody>
                     {% if object.owner == request.user %}
                     <tr><td>UUID</td><td><code>{{ object.uuid }}</code></td></tr>
+                    <tr><td>API Key</td><td><code>{{ object.api_key }}</code></td></tr>
                     {% endif %}
                     <tr><td>URL</td><td>{{ object.url }}</td></tr>
                     <tr><td>Users - Recent</td><td>{{ object.users_recent_data }}</td></tr>
