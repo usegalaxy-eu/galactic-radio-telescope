@@ -20,7 +20,6 @@ a.tag {
             {{ object.description }}
         </p>
 
-    {% if object.latitude != 0 and object.longitude != 0 %}
     <div id="map" class="map"></div>
     <script type="text/javascript">
         var pt = ol.proj.fromLonLat([{{object.longitude | safe}}, {{object.latitude | safe}}]);
@@ -51,8 +50,6 @@ a.tag {
             })
         });
     </script>
-    {% endif %}
-
 
     </div>
     <div class="col-md-8">
