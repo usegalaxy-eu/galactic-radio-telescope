@@ -27,6 +27,10 @@ class Command(BaseCommand):
             if feature['properties']['URL'].startswith('http'):
                 gi.url = feature['properties']['URL']
 
+            if 'public' not in gi.tags:
+                gi.tags.add('public')
+            gi.public = True
+
             gi.latitude = feature['geometry']['coordinates'][1]
             gi.longitude = feature['geometry']['coordinates'][0]
             gi.save()
