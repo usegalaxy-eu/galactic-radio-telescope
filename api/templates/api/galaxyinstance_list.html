@@ -9,6 +9,7 @@
     padding: 0px;
     margin: 1em;
     min-height: 15em;
+    max-height: 15em;
     position: relative;
 }
 .card .card-title{
@@ -25,6 +26,8 @@
 
 .card-content{
     padding: 1em;
+    text-overflow: ellipsis;
+
 }
 
 .card-footer{
@@ -34,6 +37,9 @@
     padding: 0.5em;
     background: #eeeeee;
 }
+    a.btn {
+        color: white;
+    }
 </style>
 
 <div class="container">
@@ -43,27 +49,53 @@
     {% else %}
     <div id="map" class="map" style="height: 400px"></div>
     <script type="text/javascript">
-        var tiles = new ol.layer.Tile({
-            source: new ol.source.OSM()
-        });
+    fetch('{% url "galaxy-map" %}', {
+        method: 'GET',
+        credentials: 'same-origin'
+    }).then(function(response) {
+        return response.json();
+    }).then(function(json) {
 
-        var galaxies = new ol.layer.Vector({
-            title: 'added Layer',
-            source: new ol.source.GeoJSON({
-                projection : 'EPSG:3857',
-                url: '{% url "galaxy-map" %}'
-            })
-        });
+        var map = L.map('map').setView([0, 0], 2);
 
-        var map = new ol.Map({
-            layers: [tiles, galaxies],
-            target: document.getElementById('map'),
-            view: new ol.View({
-                center: [0, 0],
-                zoom: 2
-            })
-        });
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
+        function onEachFeature(feature, layer) {
+            // TODO: Sanitize
+            var popupContent = "<h4>" + feature.properties.name +"</h4>" + 
+                "<p>" + feature.properties.description + "</p>";
+            console.log(feature.properties)
+            popupContent += '<a class="btn btn-primary btn-sm" role="button" href="' + feature.properties.id + '">More Information</a>';
+            if(feature.properties.url){
+                popupContent += '&nbsp;<a target="_blank" class="btn btn-success btn-sm" role="button" href="' + feature.properties.url + '">Visit Galaxy</a>';
+            }
+
+            if (feature.properties && feature.properties.popupContent) {
+                popupContent += feature.properties.popupContent;
+            }
+            layer.bindPopup(popupContent);
+        }
+
+        L.geoJson([json], {
+            style: function (feature) {
+                return feature.properties && feature.properties.style;
+            },
+            onEachFeature: onEachFeature,
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, {
+                    radius: 8,
+                    fillColor: "#ff7800",
+                    color: "#000",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                });
+            }
+        }).addTo(map);
+
+    });
     </script>
 
     {% endif %}
@@ -76,7 +108,7 @@
                 <h3>{{ galaxy.humanname }}</h3>
             </div>
             <div class="card-content">
-                <p>{{ galaxy.description }}</p>
+                {{ galaxy.description }}
             </div>
             <div class="card-footer">
                 {{ galaxy.norm_users_recent }} {% fontawesome_icon 'user' %}

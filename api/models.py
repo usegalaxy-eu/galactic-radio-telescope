@@ -78,7 +78,7 @@ class GalaxyInstance(models.Model):
     # tool_counts = models.ManyToManyField(IntegerDataPoint, related_name='tools_recent_data', blank=True)
     tools = models.ManyToManyField(Tool, blank=True)
 
-    tags = tagulous.models.TagField()
+    tags = tagulous.models.TagField(blank=True)
 
     # Owner of this Galaxy instance
     owner = models.ForeignKey(User)

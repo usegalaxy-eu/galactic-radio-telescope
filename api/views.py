@@ -272,7 +272,7 @@ def galaxy_geojson(request, pk=None):
     }
 
     for galaxy in galaxies:
-        if 'public' in galaxy.tags:
+        if galaxy.public or request.user == galaxy.owner or request.user.is_superuser:
             feature = {
                 'type': 'Feature',
                 'geometry': {
@@ -283,6 +283,7 @@ def galaxy_geojson(request, pk=None):
                     'name': galaxy.humanname,
                     'url': galaxy.url,
                     'description': galaxy.description,
+                    'id': str(galaxy.uuid),
                 }
             }
 
