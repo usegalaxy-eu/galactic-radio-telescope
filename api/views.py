@@ -146,7 +146,7 @@ def v1_upload_data(request):
 class GalaxyInstanceEdit(UpdateView):
     model = GalaxyInstance
     slug_field = 'uuid'
-    fields = ('url',)
+    fields = ('url', 'humanname', 'description', 'public', 'latitude', 'longitude', 'tags')
 
 
 class GalaxyInstanceView(DetailView):
