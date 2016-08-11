@@ -14,7 +14,14 @@ a.tag {
 }
 </style>
 <div class="container">
-    <h1>{{ object.humanname }}</h1>
+    <h1>{{ object.humanname  }}
+        {% if object.owner == request.user %}
+        <a href="{% url 'galaxy-instance-edit' object.uuid %}">
+            {% fontawesome_icon 'pencil' %}
+        </a>
+        {% endif %}
+    </h1>
+
     <div class="col-md-4">
         <p>
             {{ object.description }}
