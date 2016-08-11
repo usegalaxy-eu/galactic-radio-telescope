@@ -35,19 +35,8 @@ a.tag {
             }).addTo(map);
 
             L.geoJson([json], {
-                style: function (feature) {
-                    return feature.properties && feature.properties.style;
-                },
-                pointToLayer: function (feature, latlng) {
-                    return L.circleMarker(latlng, {
-                        radius: 8,
-                        fillColor: "#ff7800",
-                        color: "#000",
-                        weight: 1,
-                        opacity: 1,
-                        fillOpacity: 0.8
-                    });
-                }
+                onEachFeature: onEachFeature,
+                pointToLayer: pointToLayer,
             }).addTo(map);
         });
         </script>

@@ -12,6 +12,54 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		{% bootstrap_styles theme='flatly' type='min.css' %}
 		<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript">
+function onEachFeature(feature, layer) {
+	// TODO: Sanitize
+	var popupContent = "<h4>" + feature.properties.name +"</h4>" + 
+		"<p>" + feature.properties.description + "</p>";
+	popupContent += '<a class="btn btn-primary btn-sm" role="button" href="' + feature.properties.id + '">More Information</a>';
+	if(feature.properties.url){
+		popupContent += '&nbsp;<a target="_blank" class="btn btn-success btn-sm" role="button" href="' + feature.properties.url + '">Visit Galaxy</a>';
+	}
+
+	if (feature.properties && feature.properties.popupContent) {
+		popupContent += feature.properties.popupContent;
+	}
+	layer.bindPopup(popupContent);
+}
+
+function colorForTags(tags, url){
+	for(var i in tags){
+		if(tags[i] == "public"){
+			console.log(tags, url)
+			if(url){
+				return '#149c82';
+			} else {
+				return '#4872a0';
+			}
+		}
+	}
+
+	if(url){
+		return '#4872a0';
+	}
+	else{
+		return '#333333'
+	}
+
+}
+
+function pointToLayer(feature, latlng) {
+	return L.circleMarker(latlng, {
+		radius: 8,
+		fillColor: colorForTags(feature.properties.tags, feature.properties.url),
+		color: "#000",
+		weight: 1,
+		opacity: 1,
+		fillOpacity: 0.8
+	});
+}
+</script>
 
 		<link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
 		<script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
@@ -22,6 +70,9 @@
 			div.{ padding-top: 40px;  }
 			@media screen and (max-width: 768px) {
 				body { padding-top: 0px;  }
+			}
+			#map a.btn {
+				color: white;
 			}
 		</style>
 	</head>

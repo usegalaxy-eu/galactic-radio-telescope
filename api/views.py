@@ -284,6 +284,7 @@ def galaxy_geojson(request, pk=None):
                     'url': galaxy.url,
                     'description': galaxy.description,
                     'id': str(galaxy.uuid),
+                    'tags': [str(x) for x in galaxy.tags.all()],
                 }
             }
 
