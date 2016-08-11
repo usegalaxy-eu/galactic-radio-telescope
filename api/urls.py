@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.contrib import admin
-from .views import v1_upload_data, \
+from .views import v1_upload_data, galaxy_geojson, \
     GalaxyInstanceView, \
     GalaxyInstanceEdit, \
     GalaxyInstanceCreate, \
@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^tool/(?P<pk>[0-9a-f-]{36})/$', ToolView.as_view(), name='tool-detail'),
 
     url(r'^api/v1/upload$', v1_upload_data, name='v1-upload'),
-    url(r"^account/", include("account.urls")),
+    url(r'^api/galaxy_map$', galaxy_geojson, name='galaxy-map'),
+    url(r'^api/galaxy_map/(?P<pk>[0-9a-f-]{36})$', galaxy_geojson, name='galaxy-map'),
 
+    url(r"^account/", include("account.urls")),
 ]

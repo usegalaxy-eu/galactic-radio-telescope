@@ -174,7 +174,7 @@ class GalaxyInstanceCreateSuccess(DetailView):
 
 class GalaxyInstanceCreate(CreateView):
     model = GalaxyInstance
-    fields = ('url', 'humanname', 'description', 'public')
+    fields = ('url', 'humanname', 'description', 'public', 'latitude', 'longitude', 'tags')
     template_name_suffix = '_create'
 
     def get_success_url(self):
@@ -259,3 +259,38 @@ def compare(val1, val2):
     for x, y in zip(val1, val2):
         result |= ord(x) ^ ord(y)
     return result == 0
+
+def galaxy_geojson(request, pk=None):
+    if pk is not None:
+        galaxies = [GalaxyInstance.objects.get(uuid=pk)]
+    else:
+        galaxies = GalaxyInstance.objects.all()
+
+    data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+
+    for galaxy in galaxies:
+        if 'public' in galaxy.tags:
+            feature = {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': [ galaxy.longitude, galaxy.latitude ],
+                },
+                'properties': {
+                    'name': galaxy.humanname,
+                    'url': galaxy.url,
+                    'description': galaxy.description,
+                }
+            }
+
+            if 'university' in galaxy.tags:
+                feature['properties'].update({
+                    'class': 'college',
+                })
+
+            data['features'].append(feature)
+
+    return HttpResponse(content=json.dumps(data), status=200)

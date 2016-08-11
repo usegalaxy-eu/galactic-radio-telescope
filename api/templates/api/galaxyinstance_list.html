@@ -40,6 +40,32 @@
     <h1>Galaxy Directory</h1>
     {% if slug%}
     Galaxies tagged <code>{{ slug }}</code>
+    {% else %}
+    <div id="map" class="map" style="height: 400px"></div>
+    <script type="text/javascript">
+        var tiles = new ol.layer.Tile({
+            source: new ol.source.OSM()
+        });
+
+        var galaxies = new ol.layer.Vector({
+            title: 'added Layer',
+            source: new ol.source.GeoJSON({
+                projection : 'EPSG:3857',
+                url: '{% url "galaxy-map" %}'
+            })
+        });
+
+        var map = new ol.Map({
+            layers: [tiles, galaxies],
+            target: document.getElementById('map'),
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 2
+            })
+        });
+
+    </script>
+
     {% endif %}
     <div class="row">
     {% for galaxy in object_list %}
