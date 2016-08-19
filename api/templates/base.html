@@ -96,8 +96,8 @@ function pointToLayer(feature, latlng) {
 								<span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{% url 'account_settings' %}">Settings</a></li>
-								<li><a href="{% url 'account_logout' %}">Log out</a></li>
+								<li><a href="{% url 'account_settings' %}">{% trans "Settings" %}</a></li>
+								<li><a href="{% url 'account_logout' %}">{% trans "Log out" %}</a></li>
 								<li class="divider"></li>
 								<li><a href="{% url 'owned-galaxy-instance-list' %}">My Galaxies</a></li>
 								<li><a href="{% url 'galaxy-instance-create' %}">Register New Galaxy</a></li>
@@ -111,12 +111,12 @@ function pointToLayer(feature, latlng) {
 					{% else %}
 						<li>
 							<a href="{% url 'account_signup' %}">
-								Signup
+								{% trans "Sign up" %}
 							</a>
 						</li>
 						<li>
 							<a href="{% url 'account_login' %}">
-								Login
+								{% trans "Login" %}
 							</a>
 						</li>
 					{% endif %}

@@ -9,6 +9,7 @@ from django.db import transaction
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
+from django.contrib.auth.models import User
 from .models import GalaxyInstance, Tool, ToolVersion, Job, IntegerDataPoint
 import re
 import json
@@ -194,6 +195,10 @@ class GalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
 
+class TrainingNetworkHome(ListView):
+    model = User
+
+
 class TaggedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
     template_name_suffix = '_list'
@@ -259,6 +264,7 @@ def compare(val1, val2):
     for x, y in zip(val1, val2):
         result |= ord(x) ^ ord(y)
     return result == 0
+
 
 def galaxy_geojson(request, pk=None):
     if pk is not None:

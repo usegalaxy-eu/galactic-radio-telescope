@@ -9,7 +9,8 @@ from .views import v1_upload_data, galaxy_geojson, \
     GalaxyInstanceListView, \
     OwnedGalaxyInstanceListView, \
     TaggedGalaxyInstanceListView, \
-    ToolView, ToolList
+    ToolView, ToolList, \
+    TrainingNetworkHome
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='base/home.html'), name='home'),
@@ -24,6 +25,8 @@ urlpatterns = [
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/edit$', GalaxyInstanceEdit.as_view(), name='galaxy-instance-edit'),
     url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/success$', GalaxyInstanceCreateSuccess.as_view(), name='galaxy-instance-create-success'),
+
+    url(r'^training/$', TrainingNetworkHome.as_view(), name='galaxy-training-network'),
 
     url(r'^tool/$', ToolList.as_view(), name='tool-list'),
     url(r'^tool/(?P<pk>[0-9a-f-]{36})/$', ToolView.as_view(), name='tool-detail'),
