@@ -79,8 +79,6 @@ class GalaxyInstance(models.Model):
     # Galaxies for a particular tool. E.g. toolcat.
     tools = models.ManyToManyField(ToolVersion, blank=True)
 
-    tags = tagulous.models.TagField(blank=True, tree=True)
-
     # Owner of this Galaxy instance
     owners = models.ManyToManyField(User)
     # API key for submitting results regarding this Galaxy instance. Must
@@ -97,7 +95,7 @@ class Metric(models.Model):
     """
     name = models.CharField(max_length=64)
     type = models.IntegerField(choices=METRIC_TYPES)
-    value = models.CharField()
+    value = models.CharField(max_length=64)
 
 
 class JobParam(models.Model):

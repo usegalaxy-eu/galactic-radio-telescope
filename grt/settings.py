@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'tagulous',
     'rest_framework',
-    'raven.contrib.django.raven_compat',
+    # 'raven.contrib.django.raven_compat',
     'fontawesome',
     'bootstrap3',
     'account',

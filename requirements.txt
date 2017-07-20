@@ -1,9 +1,7 @@
 Django
-#django-bootstrap-themes
-#django-bootstrap3
-#jsonfield
+django-bootstrap-themes
+django-bootstrap3
 django-user-accounts
-#django-fontawesome
+django-fontawesome
 djangorestframework
-#raven
 django-tagulous
