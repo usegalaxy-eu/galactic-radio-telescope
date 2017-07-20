@@ -1,15 +1,24 @@
+"""
+GRT Models
+"""
 from __future__ import unicode_literals
-from django.db import models
-from jsonfield import JSONField
-from django.core.urlresolvers import reverse_lazy
-from django.contrib.auth.models import User
-import tagulous
+
 import uuid as pyuuid
+
+import tagulous
+
+from django.db import models
+from django.contrib.auth.models import User
+
+
+METRIC_TYPES = (
+    (0, 'int'),
+    (1, 'float'),
+    (2, 'text')
+)
 
 class Tool(models.Model):
     """A single tool"""
-    id = models.UUIDField(primary_key=True, default=pyuuid.uuid4, editable=False)
-
     tool_id = models.CharField(max_length=128)
     tool_name = models.CharField(max_length=64)
 
@@ -19,6 +28,7 @@ class Tool(models.Model):
     @property
     def instance_count(self):
         return set([tv.found_in() for tv in self.toolversion_set.all()])
+
 
 class ToolVersion(models.Model):
     """A version of a single tool"""
@@ -44,44 +54,35 @@ class ToolVersion(models.Model):
         return len(self.found_in)
 
 
-
-class IntegerDataPoint(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
-    value = models.IntegerField(default=0)
-
-
 class GalaxyInstance(models.Model):
     """A single galaxy site. Corresponds to a single galaxy.ini"""
-    # uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     uuid = models.UUIDField(default=pyuuid.uuid4, editable=False)
-    # Need not be provided
-    url = models.URLField(null=True, blank=True)
-    humanname = models.CharField(max_length=256, null=True, blank=True)
-    description = models.TextField()
+    # Optional
+    url = models.URLField(null=True, help_text="Publicly accesible instance URL")
+    title = models.CharField(max_length=256, null=True, help_text="The name / title of the instance. E.g. GalaxyP")
+    description = models.TextField(null=True, help_text="Any extra description you wish to add.")
     # The instance's information should be published. This will include a
-    # logo/domain name page for each instance (eventually). This will allow GRT
-    # to function as a galaxy directory for sorts.
-    public = models.BooleanField(default=False)
+    # logo/domain name page for each instance.
+    publicly_visible = models.BooleanField(default=False, help_text="We are willing to release our metadata (tools, job logs) publicly.")
+    public = models.BooleanField(default=False, help_text="Is the instance open to the public?")
 
+    ## Private Fields
     # Aggregate User data. Only retain 32 data points for a nice graph.
-    users_recent = models.ManyToManyField(IntegerDataPoint, related_name='user_recent_data', blank=True)
-    users_total = models.ManyToManyField(IntegerDataPoint, related_name='user_total_data', blank=True)
-    # Aggregate Job Data
-    jobs_run = models.ManyToManyField(IntegerDataPoint, related_name='job_recent_data', blank=True)
-
+    users_recent = models.TextField(blank=True)
+    users_total = models.TextField(blank=True)
+    jobs_run = models.TextField(blank=True)
     norm_users_recent = models.IntegerField(default=0)
 
     latitude = models.FloatField(default=0)
     longitude = models.FloatField(default=0)
     # Tools installed on the server. This will allow searching through all
-    # Galaxies for a particular tool.
-    # tool_counts = models.ManyToManyField(IntegerDataPoint, related_name='tools_recent_data', blank=True)
-    tools = models.ManyToManyField(Tool, blank=True)
+    # Galaxies for a particular tool. E.g. toolcat.
+    tools = models.ManyToManyField(ToolVersion, blank=True)
 
     tags = tagulous.models.TagField(blank=True, tree=True)
 
     # Owner of this Galaxy instance
-    owner = models.ForeignKey(User)
+    owners = models.ManyToManyField(User)
     # API key for submitting results regarding this Galaxy instance. Must
     # remain secure!!
     api_key = models.UUIDField(default=pyuuid.uuid4, editable=False)
@@ -89,70 +90,36 @@ class GalaxyInstance(models.Model):
     def __str__(self):
         return '%s <%s>' % (self.humanname, self.url)
 
-    def get_absolute_url(self):
-        return reverse_lazy('galaxy-instance-detail', kwargs={'slug': self.uuid})
 
-    @property
-    def latest_users_total(self):
-        if self.users_total.count() > 0:
-            return [x.value for x in self.users_total.all().order_by('-date')[0:1]][0]
-        else:
-            return 0
+class Metric(models.Model):
+    """
+    Tuple of (name, type, value).
+    """
+    name = models.CharField(max_length=64)
+    type = models.IntegerField(choices=METRIC_TYPES)
+    value = models.CharField()
 
-    @property
-    def users_recent_data(self):
-        if self.users_recent.count() > 0:
-            return [x.value for x in self.users_recent.all().order_by('-date')[0:1]][0]
-        else:
-            return 0
 
-    @property
-    def users_total_data(self):
-        if self.users_total.count() > 0:
-            return [x.value for x in self.users_total.all().order_by('-date')[0:1]][0]
-        else:
-            return 0
-
-    @property
-    def jobs_run_data(self):
-        if self.jobs_run.count() > 0:
-            return [x.value for x in self.jobs_run.all().order_by('-date')[0:1]][0]
-        else:
-            return 0
-
-    @property
-    def tool_set(self):
-        tools = set([job.tool for job in self.job_set.all()])
-        return tools
-
-    @property
-    def tool_set_size(self):
-        return len(self.tool_set)
-
-    def spark_users(self):
-        return ','.join([str(x.value) for x in self.users_recent.all().order_by('-date')[0:10]])
-
-    def spark_jobs(self):
-        return ','.join([str(x.value) for x in self.jobs_run.all().order_by('-date')[0:10]])
+class JobParam(models.Model):
+    """
+    A given parameter within a job. For non-repeats, these are simple
+    (some_param, 10), for repeats and other more complex ones, this comes as a
+    giant JSON struct.
+    """
+    name = models.TextField()
+    value = models.TextField()
 
 
 class Job(models.Model):
-    ## Galaxy Instance
+    """
+    A single galaxy job
+    """
+    # Galaxy Instance
     instance = models.ForeignKey(GalaxyInstance)
-
-    ## Tool
+    # Tool
     tool = models.ForeignKey(ToolVersion)
-    # These are normalized to help with queries.
-    tool_name = models.CharField(max_length=64)
-    tool_version = models.CharField(max_length=64)
 
     ## Run Information
     date = models.DateTimeField(null=True, blank=True)
-    # Tool params
-    params = JSONField()
-
-    # Metrics/collectl
-    metrics_core_runtime_seconds = models.DecimalField(max_digits=10, decimal_places=3, blank=True, null=True)
-    metrics_meminfo_swaptotal = models.IntegerField(blank=True, null=True)
-    metrics_meminfo_memtotal = models.IntegerField(blank=True, null=True)
-    metrics_core_galaxy_slots = models.IntegerField(default=0)
+    params = models.ManyToManyField(JobParam)
+    metrics = models.ManyToManyField(Metric)

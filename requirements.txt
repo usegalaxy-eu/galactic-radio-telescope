@@ -1,9 +1,9 @@
-Django==1.9.2
-django-bootstrap-themes
-django-bootstrap3
-jsonfield
+Django
+#django-bootstrap-themes
+#django-bootstrap3
+#jsonfield
 django-user-accounts
-django-fontawesome
+#django-fontawesome
 djangorestframework
-raven
+#raven
 django-tagulous
