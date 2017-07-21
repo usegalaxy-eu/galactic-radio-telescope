@@ -66,12 +66,9 @@ class GalaxyInstance(models.Model):
     publicly_visible = models.BooleanField(default=False, help_text="We are willing to release our metadata (tools, job logs) publicly.")
     public = models.BooleanField(default=False, help_text="Is the instance open to the public?")
 
-    ## Private Fields
-    # Aggregate User data. Only retain 32 data points for a nice graph.
     users_recent = models.TextField(blank=True)
     users_total = models.TextField(blank=True)
     jobs_run = models.TextField(blank=True)
-    norm_users_recent = models.IntegerField(default=0)
 
     latitude = models.FloatField(default=0)
     longitude = models.FloatField(default=0)
@@ -81,9 +78,13 @@ class GalaxyInstance(models.Model):
 
     # Owner of this Galaxy instance
     owners = models.ManyToManyField(User)
-    # API key for submitting results regarding this Galaxy instance. Must
-    # remain secure!!
+
+    # API key for submitting results regarding this Galaxy instance
     api_key = models.UUIDField(default=pyuuid.uuid4, editable=False)
+
+    # We import data on a cron job, we use this to track which was the most
+    # recent data file that we imported.
+    last_import = models.IntegerField(default=-1)
 
     def __str__(self):
         return '%s <%s>' % (self.humanname, self.url)
@@ -121,3 +122,12 @@ class Job(models.Model):
     date = models.DateTimeField(null=True, blank=True)
     params = models.ManyToManyField(JobParam)
     metrics = models.ManyToManyField(Metric)
+
+    # We store the job ID from their database in order to ensure that we do not
+    # create duplicate records.
+    external_job_id = models.IntegerField(default=-1)
+
+    # Ensure that the combination of instance + external_job_id is unique. We
+    # don't want duplicate jobs skewing our results.
+    class Meta:
+        unique_together = (('instance', 'external_job_id'),)

@@ -24,3 +24,67 @@ ever so slightly to allow us some more freedom in how and when we process the da
 - Cron job to ingest data into a postgres database (eventually we can add additional cron jobs to ingest into a document
   store, etc.)
 - The web frontend has access to the postgres DB.
+
+### Data Upload
+
+Data will be uploaded to per-instance folders. The structure will be as follows:
+
+```
+<instance_id (uuid)>
+├── archives
+│   ├── 0.tar.gz
+│   ├── 0.json
+│   ├── 1.tar.gz
+│   ├── 1.json
+│   ├── 2.tar.gz
+│   └── 2.json
+└── metadata.json
+```
+
+The metadata.json will look approximately like:
+
+```json
+{
+  "url": "https://example.com/galaxy/",
+  "title": "NLP Galaxy",
+  "description": "Some\ndescription",
+  "publicly_visible": true,
+  "public": true,
+  "users_recent": 30,
+  "users_total": 1000,
+  "jobs_run": 1000000000,
+  "latitude": 0.000,
+  "longitude": 0.000,
+  "tools": [
+    {
+      "id": "toolshed.g2....",
+      "version": "1.0.0",
+      "tool_shed_repository": {
+        "changeset_revision": "abcdef",
+        "name": "tool_repo",
+        "toolshed": "toolshed.g2.bx.psu.edu"
+      }
+    }
+  ],
+  "owners": [
+     "jane.doe"
+  ]
+}
+```
+
+The `archives/####.tar.gz` files will be structured as:
+
+
+The `archives/####.json` files will be used to store metadata about the specific upload, or anything else that we deem
+relevant. The structure is liable to change whenever we deem necessary.
+
+```json
+{
+    "version": 1,
+    "generated": 1500541683,
+    "metrics": {
+        "query_time": 0.000,
+        "tarball_time": 0.000
+    }
+}
+```
