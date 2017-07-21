@@ -48,23 +48,9 @@ The metadata.json will look approximately like:
   "url": "https://example.com/galaxy/",
   "title": "NLP Galaxy",
   "description": "Some\ndescription",
-  "publicly_visible": true,
   "public": true,
-  "users_recent": 30,
-  "users_total": 1000,
-  "jobs_run": 1000000000,
   "latitude": 0.000,
-  "longitude": 0.000,
-  "tools": [
-    {
-      "id": "toolshed.g2....",
-      "version": "1.0.0",
-      "tool_shed_repository": {
-        "changeset_revision": "abcdef",
-        "name": "tool_repo",
-        "toolshed": "toolshed.g2.bx.psu.edu"
-      }
-    }
+  "longitude": 0.000
   ],
   "owners": [
      "jane.doe"
@@ -85,6 +71,24 @@ relevant. The structure is liable to change whenever we deem necessary.
     "metrics": {
         "query_time": 0.000,
         "tarball_time": 0.000
-    }
+    },
+    "users": {
+        "active": 30,
+        "total": 1000,
+    },
+    "jobs": {
+        "ok": 10000000
+    },
+    "tools": [
+        {
+            "id": "toolshed.g2....",
+            "version": "1.0.0",
+            "tool_shed_repository": {
+                "changeset_revision": "abcdef",
+                "name": "tool_repo",
+                "toolshed": "toolshed.g2.bx.psu.edu"
+            }
+        }
+    ]
 }
 ```

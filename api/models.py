@@ -63,7 +63,6 @@ class GalaxyInstance(models.Model):
     description = models.TextField(null=True, help_text="Any extra description you wish to add.")
     # The instance's information should be published. This will include a
     # logo/domain name page for each instance.
-    publicly_visible = models.BooleanField(default=False, help_text="We are willing to release our metadata (tools, job logs) publicly.")
     public = models.BooleanField(default=False, help_text="Is the instance open to the public?")
 
     users_recent = models.TextField(blank=True)
