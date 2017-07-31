@@ -20,8 +20,8 @@ class Command(BaseCommand):
             # u'https://galaxy-tut.genome.edu.au', u'name': u'Galaxy Tute',
             # u'description': u'Galaxy server for GVL tutorials.'}}
             gi, created = GalaxyInstance.objects.get_or_create(
-                humanname=feature['properties']['name'],
-                owner=user,
+                title=feature['properties']['name'],
+                owners=[user],
             )
             gi.description = feature['properties']['description']
             if feature['properties']['URL'].startswith('http'):

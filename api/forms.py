@@ -4,7 +4,7 @@ from django import forms
 class ReportForm(forms.Form):
     report = forms.FileField(label='Compiled Report File', required=True)
 
-    humanname = forms.CharField(max_length=256)
+    title = forms.CharField(max_length=256)
     description = forms.CharField()
 
     ipaddr = forms.CharField(max_length=16, required=True)

@@ -14,11 +14,11 @@
         </thead>
         <tbody>
         {% for galaxy in object_list %}
-            {% if galaxy.public or galaxy.owner == request.user or request.user.is_superuser %}
+            {% if galaxy.public or request.user in galaxy.owners or request.user.is_superuser %}
                 <tr>
                     <td>
-                        <a href="{% url 'galaxy-instance-detail' galaxy.uuid %}">
-                            {{ galaxy.humanname }}
+                        <a href="{% url 'galaxy-instance-detail' galaxy.id %}">
+                            {{ galaxy.title }}
                         </a>
                     </td>
                     <td><span class="sparkline">{{ galaxy.spark_users }}</span></td>

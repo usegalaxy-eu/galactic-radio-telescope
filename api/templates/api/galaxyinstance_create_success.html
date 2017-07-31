@@ -17,69 +17,77 @@
         tags and the location sharing feature, if you wish to opt-in.
 <pre style="color: black">
 galaxy_config: config/galaxy.ini
-grt_server:
-    ## URL to your GRT server
-    grt_url: https://telescope.galaxyproject.org/api/v1/upload
-    ## An instance ID uniquely identifies your Galaxy instance
-    instance_id: "{{ object.uuid }}"
-    ## An API key is required to submit data to GRT
-    api_key: "{% if object.owner == request.user %}{{ object.api_key }}{% endif %}"
 
-## The public name and description of your Galaxy instance
-instance:
-    ## The publicly accessible URL of your galaxy instance. E.g. https://fqdn/galaxy
-    url: "{{ object.url }}"
-    name: "{{ object.humanname }}"
-    description: |
-        {{ object.description }}
-    tags:
+grt:
+    # Go to https://telescope.galaxyproject.org to obtain an Instance ID and API key
+    instance_id: "{{ object.id }}"
+    api_key: "{% if request.user in object.owners.all %}{{ object.api_key }}{% endif %}"
+    # Galaxy Project offers a public galactic-radio-telescope instance, however
+    # you are free to run your own if you need. We would love it if you were
+    # willing and able to contribute your data publicly.
+    url: https://telescope.galaxyproject.org/
+    # Some metadata about your galaxy instance
+    metadata:
+        url: "{{ object.url }}"
+        title: "{{ object.title }}"
+        description: |
+            {{ object.description }}
+        # Is the instance open to the public?
         {% if object.public %}
-        - public
-        #- private
+        public: True
         {% else %}
-        #- public
-        - private
+        public: False
         {% endif %}
-        ## If this is a cloudlaunch server, you could indicate that here
-        #- cloudlaunch
-        ## If you wish to share what infrastucture you're running on, there are
-        #tags for this:
-        #- infra/aws
-        #- infra/gcp
-        #- infra/azure
-        #- infra/other_cloud
-        #- infra/private
-        ## Additionally if you wish to share a bit about your job runners we
-        #would be interested to hear who is using which runners.
-        #- cluster/condor
-        #- cluster/slurm
+        # Optional Location
+        latitude: 0.00
+        longitude: 0.00
+        # Owners (these are the usernames of users registered with the galactic-radio-telescope system.)
+        owners:
+            - {{ request.user }}
 
-location:
-    # If autodetect is set to true, then an attempt will be made to
-    # automatically detect your location using a third party service
-    # (http://ip-api.com, https://icanhazip.com).
-    autodetect: false
-    # If you still wish to share the location of your Galaxy server
-    # (great for helping people find local resources for Galaxy)
-    latitude: 0
-    longitude: 0
-
-tool_blacklist:
-  - __SET_METADATA__
-  - upload1
+blacklist:
+    # Blacklist the entire tool from appearing
+    tools:
+        - __SET_METADATA__
+        - upload1
+    # Or you can blacklist individual parameters from being submitted, e.g. if
+    # you have API keys as a tool parameter.
+    tool_params:
+        # If you wish to remove a specific parameter from *all* tools, you can
+        # do this by setting the name under `__all__`
+        __any__:
+            - chromInfo
+        # Or to blacklist under a specific tool, just specify the ID
+        edu.tamu.cpt.admin.metadataFetch:
+            - dbkey
+            # If you need to specify a parameter multiple levels deep, you can
+            # do that as well. Currently we only support blacklisting via the
+            # full path, rather than just a path component. So everything under
+            # `path.to.parameter` will be blacklisted.
+            - path.to.parameter
+            # However you could not do "parameter" and have everything under
+            # `path.to.parameter` be removed.
+            # Repeats are rendered as an *, e.g.: repeat_name.*.values
 </pre>
     </p>
     <h2>Step 2</h2>
     <p>
         Next you will need to configure this script to run as a cron job, every
-        week. We highly recommend placing a script like the following in
+        week. We recommend placing a script like the following in
         <code>/etc/cron.weekly</code>, and <code>chmod +x</code>ing it.
 <pre style="color: black">
 #!/bin/bash
-python $GALAXY_ROOT/scripts/grt.py -c $GALAXY_ROOT/config/galaxy.ini
+python $GALAXY_ROOT/scripts/grt.py -c $GALAXY_ROOT/scripts/grt.yml -r $GALAXY_ROOT/grt_reports/
+</pre>
+    You can run the script at any time and it will generate a directory of
+    reports. These are not immediately uploaded to the Galactic Radio
+    Telescope, this is can be done in a separate process:
+
+<pre style="color: black">
+#!/bin/bash
+python $GALAXY_ROOT/scripts/grt-submit.py -c $GALAXY_ROOT/scripts/grt.yml -r $GALAXY_ROOT/grt_reports/
 </pre>
 
-    You can run the script with <code>--dry-run</code> beforehand, to see what data it will send.
     </p>
     <h2>Step 3</h2>
     <p>
@@ -89,14 +97,14 @@ python $GALAXY_ROOT/scripts/grt.py -c $GALAXY_ROOT/config/galaxy.ini
     <div class="alert alert-warning">
         <h4>Warning</h4>
         <p>
-            You might consider subscribing to the <a href="https://github.com/erasche/galactic-radio-telescope">
+            You might consider watching the <a href="https://github.com/erasche/galactic-radio-telescope">
             GRT repository</a> as the GRT is a very new project.
         </p>
     </div>
     <h2>Your Galaxy Instance</h2>
     <p>
         You can the see and correct the information associated with
-        <a href="{% url 'galaxy-instance-detail' object.uuid %}">your Galaxy instance.</a>
+        <a href="{% url 'galaxy-instance-detail' object.id %}">your Galaxy instance.</a>
     </p>
 
 </div>

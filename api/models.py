@@ -8,6 +8,7 @@ import uuid as pyuuid
 import tagulous
 
 from django.db import models
+from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
 
 
@@ -56,7 +57,7 @@ class ToolVersion(models.Model):
 
 class GalaxyInstance(models.Model):
     """A single galaxy site. Corresponds to a single galaxy.ini"""
-    uuid = models.UUIDField(default=pyuuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=pyuuid.uuid4, editable=False)
     # Optional
     url = models.URLField(null=True, help_text="Publicly accesible instance URL")
     title = models.CharField(max_length=256, null=True, help_text="The name / title of the instance. E.g. GalaxyP")
@@ -85,8 +86,11 @@ class GalaxyInstance(models.Model):
     # recent data file that we imported.
     last_import = models.IntegerField(default=-1)
 
+    def get_absolute_url(self):
+        return reverse_lazy('galaxy-instance-detail', kwargs={'slug': self.id})
+
     def __str__(self):
-        return '%s <%s>' % (self.humanname, self.url)
+        return '%s <%s>' % (self.title, self.url)
 
 
 class Metric(models.Model):

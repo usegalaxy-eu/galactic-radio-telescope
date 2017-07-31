@@ -70,11 +70,11 @@
     {% endif %}
     <div class="row">
     {% for galaxy in object_list %}
-        {% if galaxy.public or galaxy.owner == request.user or request.user.is_superuser %}
-        <a href="{% url 'galaxy-instance-detail' galaxy.uuid %}">
+        {% if galaxy.public or galaxy.owners in request.user or request.user.is_superuser %}
+        <a href="{% url 'galaxy-instance-detail' galaxy.id %}">
         <div class="col-md-3 card">
             <div class="card-title">
-                <h3>{{ galaxy.humanname }}</h3>
+                <h3>{{ galaxy.title }}</h3>
             </div>
             <div class="card-content">
                 {{ galaxy.description }}

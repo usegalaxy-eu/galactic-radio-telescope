@@ -14,9 +14,9 @@ a.tag {
 }
 </style>
 <div class="container">
-    <h1>{{ object.humanname  }}
-        {% if object.owner == request.user %}
-        <a href="{% url 'galaxy-instance-edit' object.uuid %}">
+    <h1>{{ object.title  }}
+        {% if request.user in object.owners.all %}
+        <a href="{% url 'galaxy-instance-edit' object.id %}">
             {% fontawesome_icon 'pencil' %}
         </a>
         {% endif %}
@@ -28,7 +28,7 @@ a.tag {
         </p>
     <div id="map" class="map" style="height: 200px"></div>
         <script type="text/javascript">
-        fetch('{% url "galaxy-map" object.uuid %}', {
+        fetch('{% url "galaxy-map" object.id %}', {
             method: 'GET',
             credentials: 'same-origin'
         }).then(function(response) {
@@ -50,11 +50,11 @@ a.tag {
 
     </div>
     <div class="col-md-8">
-        {% if object.public or object.owner == request.user %}
+        {% if object.public or request.user in object.owners.all %}
             <table class="table table-striped">
                 <tbody>
-                    {% if object.owner == request.user %}
-                    <tr><td>UUID</td><td><code>{{ object.uuid }}</code></td></tr>
+                    {% if request.user in object.owners.all %}
+                    <tr><td>ID</td><td><code>{{ object.id }}</code></td></tr>
                     <tr><td>API Key</td><td><code>{{ object.api_key }}</code></td></tr>
                     {% endif %}
                     <tr><td>URL</td><td>{{ object.url }}</td></tr>

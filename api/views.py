@@ -1,29 +1,150 @@
 import json
 import logging
 
-from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView
-from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
+from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse_lazy
+from django.db import transaction
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.list import ListView
 
 from .models import GalaxyInstance, Tool, Job
 
 log = logging.getLogger(__name__)
 
 
+@transaction.atomic
+@csrf_exempt
+def v2_upload_data(request):
+    """Accept uploaded data regarding jobs"""
+    # Must be a POST
+    if request.method != 'POST':
+        return HttpResponse(content='Must be a POST', status=405)
+
+    print(request, dir(request))
+    return HttpResponse(content='Must be a POST', status=405)
+
+    # Instance UUID must be available
+    #instance_uuid = metadata.get('uuid', None)
+    #if instance_uuid is None:
+        #return HttpResponse('No instance UUID provided', status=400)
+
+    #instance = get_object_or_404(GalaxyInstance, uuid=instance_uuid)
+
+    ## Instance API key must be available
+    #instance_api_key = metadata.get('api_key', None)
+    #if instance_api_key is None:
+        #return HttpResponse('No instance API key provided', status=400)
+
+    ## Instance API key must be correct.
+    #if not compare(str(instance_api_key), str(instance.api_key)):
+        #return HttpResponse(status=403)
+
+    ## First update Galaxy instance metadata
+    #instance_users_recent = IntegerDataPoint(value=metadata.get('active_users', 0))
+    #instance_users_recent.save()
+    #instance.users_recent.add(instance_users_recent)
+
+    #instance_users_total = IntegerDataPoint(value=metadata.get('total_users', 0))
+    #instance_users_total.save()
+    #instance.users_total.add(instance_users_total)
+
+    #instance_jobs_run = IntegerDataPoint(value=metadata.get('recent_jobs', 0))
+    #instance_jobs_run.save()
+    #instance.jobs_run.add(instance_jobs_run)
+
+    #instance.version = metadata.get('galaxy_version', 'Unknown')
+    ##instance.tags = metadata.get('tags', [])
+    ##if 'public' in instance.tags:
+        ##instance.public = True
+    ##else:
+        ##instance.public = False
+    #instance.description = metadata.get('description', '').strip()
+    #instance.title = metadata.get('name', 'A Galaxy Instance')
+    #if len(metadata.get('url', '').strip()) > 0:
+        #instance.url = metadata['url']
+    #else:
+        #instance.url = None
+    #instance.norm_users_recent = metadata.get('active_users', 0)
+
+    #location = metadata.get('location', {'lat': 0, 'lon': 0})
+    #instance.latitude = location.get('lat', 0)
+    #instance.longitude = location.get('lon', 0)
+
+    #instance.save()
+
+    #tools = {}
+    ## Next we process the acknowleged tools:
+    #for idx, unsafe_tool_data in enumerate(data.get('tools', [])):
+        ## 'tool_id': 'xmfa2tbl',
+        ## 'tool_version': '2.4.0.0',
+        ## 'tool_name': 'Convert XMFA to a percent identity table',
+        #tool_data = {
+            #'tool_id': unsafe_tool_data.get('tool_id', None),
+            #'tool_version': unsafe_tool_data.get('tool_version', None),
+            #'tool_name': unsafe_tool_data.get('tool_name', None)
+        #}
+        #for key in tool_data.keys():
+            #if tool_data[key] is not None:
+                #sanitized_value = re.sub('[^A-Za-z0-9_./ -]+', '', tool_data[key])
+                #if tool_data[key] != sanitized_value:
+                    #log.warn("Sanitizied %s from %s to %s", key, tool_data[key], sanitized_value)
+                #tool_data[key] = sanitized_value
+            #else:
+                #tool_data[key] = ""
+
+        ## Tool data is now theoretically safe.
+        #tool, tool_created = Tool.objects.get_or_create(
+            #tool_id=tool_data['tool_id'],
+            #tool_name=tool_data['tool_name']
+        #)
+        #tool_version, tv_created = ToolVersion.objects.get_or_create(
+            #tool=tool,
+            #version=tool_data['tool_version']
+        #)
+
+        #tools[idx] = tool_version
+
+    ## Now we need to process the list of new jobs sent to us by the
+    ## client.
+    #for unsafe_job_data in data.get('jobs', []):
+        ## Will throw an error on bad data, which is OK.
+        #tool_idx = int(unsafe_job_data.get('tool', 0))
+        #if tool_idx not in tools:
+            #return HttpResponse(content='Unknown tool id %s' % tool_idx, status=400)
+        #else:
+            #tool = tools[tool_idx]
+
+        #job_date = int(unsafe_job_data.get('date', 0))
+
+        #metrics = unsafe_job_data.get('metrics', {})
+
+        #job = Job(
+            #instance=instance,
+            #tool=tool,
+            #date=datetime.datetime.fromtimestamp(job_date),
+            #metrics_core_runtime_seconds=int(metrics.get('core_runtime_seconds', 0)),
+            #metrics_core_galaxy_slots=int(metrics.get('core_galaxy_slots', 0)),
+        #)
+        #job.save()
+
+    #return HttpResponse(status=200)
+
+
 class GalaxyInstanceEdit(UpdateView):
     model = GalaxyInstance
-    slug_field = 'uuid'
-    fields = ('url', 'humanname', 'description', 'public', 'latitude', 'longitude', 'tags')
+    slug_field = 'id'
+    fields = ('url', 'title', 'description', 'public', 'latitude', 'longitude')
 
 
 class GalaxyInstanceView(DetailView):
     model = GalaxyInstance
-    slug_field = 'uuid'
+    slug_field = 'id'
 
     def get_context_data(self, **kwargs):
         context = super(GalaxyInstanceView, self).get_context_data(**kwargs)
@@ -33,12 +154,12 @@ class GalaxyInstanceView(DetailView):
 
 class GalaxyInstanceCreateSuccess(DetailView):
     model = GalaxyInstance
-    slug_field = 'uuid'
+    slug_field = 'id'
     template_name_suffix = '_create_success'
 
     def get_context_data(self, **kwargs):
         context = super(GalaxyInstanceCreateSuccess, self).get_context_data(**kwargs)
-        full_url = self.request.build_absolute_uri(str(reverse_lazy('galaxy-instance-create-success', args=(self.object.uuid, ))))
+        full_url = self.request.build_absolute_uri(str(reverse_lazy('galaxy-instance-create-success', args=(self.object.id, ))))
         components = full_url.split('/')[0:-3] + ['api', 'v1', 'upload']
         context['api_url'] = '/'.join(components)
         return context
@@ -46,19 +167,19 @@ class GalaxyInstanceCreateSuccess(DetailView):
 
 class GalaxyInstanceCreate(CreateView):
     model = GalaxyInstance
-    fields = ('url', 'humanname', 'description', 'public', 'latitude', 'longitude', 'tags')
+    fields = ('url', 'title', 'description', 'public', 'latitude', 'longitude')
     template_name_suffix = '_create'
 
     def get_success_url(self):
         return reverse_lazy(
             'galaxy-instance-create-success',
-            kwargs={'slug': self.object.uuid}
+            kwargs={'slug': self.object.id}
         )
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.owner = self.request.user
         self.object.save()
+        self.object.owners.add(self.request.user)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -84,7 +205,7 @@ class OwnedGalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
     def get_queryset(self):
-        return GalaxyInstance.objects.filter(owner=self.request.user)
+        return GalaxyInstance.objects.filter(owners__in=[self.request.user])
 
 
 class ToolView(DetailView):
@@ -135,7 +256,7 @@ def compare(val1, val2):
 
 def galaxy_geojson(request, pk=None):
     if pk is not None:
-        galaxies = [GalaxyInstance.objects.get(uuid=pk)]
+        galaxies = [GalaxyInstance.objects.get(id=pk)]
     else:
         galaxies = GalaxyInstance.objects.all()
 
@@ -145,7 +266,7 @@ def galaxy_geojson(request, pk=None):
     }
 
     for galaxy in galaxies:
-        if galaxy.public or request.user == galaxy.owner or request.user.is_superuser:
+        if galaxy.public or request.user in galaxy.owners or request.user.is_superuser:
             feature = {
                 'type': 'Feature',
                 'geometry': {
@@ -153,18 +274,18 @@ def galaxy_geojson(request, pk=None):
                     'coordinates': [ galaxy.longitude, galaxy.latitude ],
                 },
                 'properties': {
-                    'name': galaxy.humanname,
+                    'name': galaxy.title,
                     'url': galaxy.url,
                     'description': galaxy.description,
-                    'id': str(galaxy.uuid),
-                    'tags': [str(x) for x in galaxy.tags.all()],
+                    'id': str(galaxy.id),
+                    #'tags': [str(x) for x in galaxy.tags.all()],
                 }
             }
 
-            if 'university' in galaxy.tags:
-                feature['properties'].update({
-                    'class': 'college',
-                })
+            #if 'university' in galaxy.tags:
+                #feature['properties'].update({
+                    #'class': 'college',
+                #})
 
             data['features'].append(feature)
 
