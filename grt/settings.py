@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'fontawesome',
     'bootstrap3',
     'account',
-    'api',
+    'web',
 ]
 
 MIDDLEWARE_CLASSES = [
