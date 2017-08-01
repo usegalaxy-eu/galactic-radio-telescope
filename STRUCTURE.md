@@ -31,64 +31,60 @@ Data will be uploaded to per-instance folders. The structure will be as follows:
 
 ```
 <instance_id (uuid)>
-├── archives
-│   ├── 0.tar.gz
-│   ├── 0.json
-│   ├── 1.tar.gz
-│   ├── 1.json
-│   ├── 2.tar.gz
-│   └── 2.json
-└── metadata.json
-```
-
-The metadata.json will look approximately like:
-
-```json
-{
-  "url": "https://example.com/galaxy/",
-  "title": "NLP Galaxy",
-  "description": "Some\ndescription",
-  "public": true,
-  "latitude": 0.000,
-  "longitude": 0.000
-  ],
-  "owners": [
-     "jane.doe"
-  ]
-}
+└── archives
+    ├── 0.tar.gz
+    ├── 0.json
+    ├── 1.tar.gz
+    ├── 1.json
+    ├── 2.tar.gz
+    └── 2.json
 ```
 
 The `archives/####.tar.gz` files will be structured as:
 
+```
+<report_id>.jobs.tsv
+<report_id>.params.tsv
+<report_id>.metric_txt.tsv
+<report_id>.metric_num.tsv
+```
 
 The `archives/####.json` files will be used to store metadata about the specific upload, or anything else that we deem
 relevant. The structure is liable to change whenever we deem necessary.
 
 ```json
 {
-    "version": 1,
-    "generated": 1500541683,
-    "metrics": {
-        "query_time": 0.000,
-        "tarball_time": 0.000
-    },
-    "users": {
-        "active": 30,
-        "total": 1000,
-    },
-    "jobs": {
-        "ok": 10000000
-    },
-    "tools": [
-        {
-            "id": "toolshed.g2....",
-            "version": "1.0.0",
-            "tool_shed_repository": {
-                "changeset_revision": "abcdef",
-                "name": "tool_repo",
-                "toolshed": "toolshed.g2.bx.psu.edu"
-            }
-        }
+  "version": 1,
+  "galaxy_version": "17.09",
+  "generated": "1501592951.19",
+  "jobs": {
+    "error": 22,
+    "ok": 76
+  },
+  "metrics": {
+    "_times": [
+      [
+        "init_start",
+        0.00010895729064941406
+      ],
+      "..."
     ]
+  },
+  "report_hash": "sha256:1aa8b24e75077a173aeb2f1385bf38cc780260340d13303427b5c58e268784fb",
+  "tools": [
+    [
+      "CONVERTER_maf_to_interval_0",
+      "Convert MAF to Genomic Intervals",
+      "1.0.2",
+      null,
+      null,
+      null
+    ],
+    "..."
+  ],
+  "users": {
+    "active": 10,
+    "total": 2131
+  }
 }
 ```
