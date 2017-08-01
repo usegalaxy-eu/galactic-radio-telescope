@@ -135,7 +135,9 @@ STATIC_URL = '/grt/static/'
 SITE_ID = 1
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-
+GRT_UPLOAD_DIRECTORY = os.path.join(BASE_DIR, 'uploads')
+if not os.path.exists(GRT_UPLOAD_DIRECTORY):
+    os.makedirs(GRT_UPLOAD_DIRECTORY)
 
 ACCOUNT_SIGNUP_REDIRECT_URL = '/grt/'
 ACCOUNT_LOGIN_REDIRECT_URL = '/grt/'

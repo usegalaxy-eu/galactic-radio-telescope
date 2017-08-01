@@ -3,10 +3,12 @@ GRT Models
 """
 from __future__ import unicode_literals
 
+import os
 import uuid as pyuuid
 
 import tagulous
 
+from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
@@ -85,6 +87,19 @@ class GalaxyInstance(models.Model):
     # We import data on a cron job, we use this to track which was the most
     # recent data file that we imported.
     last_import = models.IntegerField(default=-1)
+
+    @property
+    def report_dir(self):
+        uuid = str(self.id)
+        instance_report_dir = os.path.join(settings.GRT_UPLOAD_DIRECTORY, uuid[0:2], uuid[2:4], uuid)
+        if not os.path.exists(instance_report_dir):
+            os.makedirs(instance_report_dir)
+        return instance_report_dir
+
+    def uploaded_reports(self):
+        """Get the set of reports that have previously been uploaded to GRT"""
+        return [path.strip('.json') for path in os.listdir(self.report_dir) if path.endswith('.json')]
+
 
     def get_absolute_url(self):
         return reverse_lazy('galaxy-instance-detail', kwargs={'slug': self.id})
