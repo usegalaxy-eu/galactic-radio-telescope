@@ -86,7 +86,7 @@ class GalaxyInstance(models.Model):
 
     # We import data on a cron job, we use this to track which was the most
     # recent data file that we imported.
-    last_import = models.IntegerField(default=-1)
+    last_import = models.FloatField(default=-1)
 
     @property
     def report_dir(self):
