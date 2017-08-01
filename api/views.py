@@ -88,7 +88,7 @@ def v2_upload_data(request):
 
 
     meta_file = os.path.join(galaxy.report_dir, report_identifier + '.json')
-    data_file = os.path.join(galaxy.report_dir, report_identifier + '.tsv.gz')
+    data_file = os.path.join(galaxy.report_dir, report_identifier + '.tar.gz')
 
     with open(meta_file, 'wb+') as handle:
         for chunk in request.FILES['meta'].chunks():

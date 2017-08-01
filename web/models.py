@@ -100,31 +100,15 @@ class GalaxyInstance(models.Model):
         """Get the set of reports that have previously been uploaded to GRT"""
         return [path.strip('.json') for path in os.listdir(self.report_dir) if path.endswith('.json')]
 
+    def new_reports(self):
+        """Get reports that have not yet been imported."""
+        return [path for path in self.uploaded_reports() if float(path) > self.last_import]
 
     def get_absolute_url(self):
         return reverse_lazy('galaxy-instance-detail', kwargs={'slug': self.id})
 
     def __str__(self):
         return '%s <%s>' % (self.title, self.url)
-
-
-class Metric(models.Model):
-    """
-    Tuple of (name, type, value).
-    """
-    name = models.CharField(max_length=64)
-    type = models.IntegerField(choices=METRIC_TYPES)
-    value = models.CharField(max_length=64)
-
-
-class JobParam(models.Model):
-    """
-    A given parameter within a job. For non-repeats, these are simple
-    (some_param, 10), for repeats and other more complex ones, this comes as a
-    giant JSON struct.
-    """
-    name = models.TextField()
-    value = models.TextField()
 
 
 class Job(models.Model):
@@ -136,10 +120,8 @@ class Job(models.Model):
     # Tool
     tool = models.ForeignKey(ToolVersion)
 
-    ## Run Information
+    # Run Information
     date = models.DateTimeField(null=True, blank=True)
-    params = models.ManyToManyField(JobParam)
-    metrics = models.ManyToManyField(Metric)
 
     # We store the job ID from their database in order to ensure that we do not
     # create duplicate records.
@@ -149,3 +131,24 @@ class Job(models.Model):
     # don't want duplicate jobs skewing our results.
     class Meta:
         unique_together = (('instance', 'external_job_id'),)
+
+
+class JobParam(models.Model):
+    """
+    A given parameter within a job. For non-repeats, these are simple
+    (some_param, 10), for repeats and other more complex ones, this comes as a
+    giant JSON struct.
+    """
+    job = models.ForeignKey(Job)
+    name = models.TextField()
+    value = models.TextField()
+
+
+class Metric(models.Model):
+    """
+    Tuple of (name, type, value).
+    """
+    job = models.ForeignKey(Job)
+    name = models.CharField(max_length=64)
+    type = models.IntegerField(choices=METRIC_TYPES)
+    value = models.CharField(max_length=64)

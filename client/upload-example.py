@@ -24,7 +24,7 @@ for report_id in local_reports:
         print("Uploading %s" % report_id)
         files = {
             'meta': open(os.path.join(sys.argv[1], report_id + '.json'), 'rb'),
-            'data': open(os.path.join(sys.argv[1], report_id + '.tsv.gz'), 'rb')
+            'data': open(os.path.join(sys.argv[1], report_id + '.tar.gz'), 'rb')
         }
         data = {
             'identifier': report_id
