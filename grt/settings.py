@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'bootstrap3',
     'account',
     'web',
+    'api',
 ]
 
 MIDDLEWARE_CLASSES = [
