@@ -15,6 +15,23 @@ should answer questions like:
 
 ![GRT Screenshot](./media/grt-screenshot.png)
 
+## GRT Questions
+
+GRT needs to be focused on answering interesting questions to its target audience(s):
+
+Users:
+
+- popular Galaxy instances
+- which instances have the tools I need
+- which tools are popular (recently)
+- popular configuration / parameters
+
+Admins:
+
+- runtimes of tools
+- relationships between runtime parameters and inputs
+- instance statistics?
+
 ## Structure
 
 This repo will encompass a web service which aggregates data and eventually
