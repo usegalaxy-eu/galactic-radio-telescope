@@ -2,7 +2,7 @@ import json
 import tarfile
 import os
 
-from web.models import GalaxyInstance
+from api.models import GalaxyInstance
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -42,16 +42,3 @@ class Command(BaseCommand):
         instance.jobs_run = meta['jobs']['ok']
         instance.last_import = report_id
         instance.save()
-
-        # Now load the report data.
-        # with tarfile.open(report_base + '.tar.gz', 'r:gz') as handle:
-            # files = {self.fix_name(member.name): member for member in mhandle}
-            # # Process jobs first.
-            # with transaction.atomic():
-                # for job in f:
-                    # (job_id, tool_id, state) = job.decode('utf-8').rstrip('\n').split('\t')
-                    # Job.objects.create(
-                        # instance=instance,
-                        # tool=Tool.objects.get_or_create(tool_id)
-                    # )
-                    # # print(job_id, tool_id, state)

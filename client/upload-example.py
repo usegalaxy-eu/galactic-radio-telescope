@@ -2,14 +2,13 @@
 import os
 import requests
 import sys
-import json
-import random
+
 
 GRT_URL = 'http://localhost:8000/grt/'
 
 # First, check status of uploaded data.
-galaxy_id = '8a0a34f4-db23-4aa4-84d1-19f490ba0cdf'
-api_key = '55692180-3456-468c-a11c-bd5bc943815c'
+galaxy_id = 'e329b603-7921-40c3-89d9-27c683ccbb46'
+api_key = 'a09678e5-2b1f-4444-98b3-e22cd1c0b2fa'
 headers = {
     'AUTHORIZATION': galaxy_id + ':' + api_key,
 }
@@ -20,7 +19,7 @@ remote_reports = data['uploaded_reports']
 # so now we can know which to send.
 local_reports = [x.strip('.json') for x in os.listdir(sys.argv[1]) if x.endswith('.json')]
 for report_id in local_reports:
-    if not report_id in remote_reports:
+    if report_id not in remote_reports:
         print("Uploading %s" % report_id)
         files = {
             'meta': open(os.path.join(sys.argv[1], report_id + '.json'), 'rb'),
