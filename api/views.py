@@ -5,7 +5,7 @@ import subprocess
 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from web.models import GalaxyInstance
+from api.models import GalaxyInstance
 
 
 def compare(val1, val2):

@@ -6,11 +6,8 @@ from __future__ import unicode_literals
 import os
 import uuid as pyuuid
 
-import tagulous
-
 from django.conf import settings
 from django.db import models
-from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.models import User
 
 
@@ -70,7 +67,7 @@ class Job(models.Model):
     # create duplicate records.
     external_job_id = models.IntegerField(default=-1)
     # Other attributes
-    tool_id= models.CharField(max_length=255)
+    tool_id = models.CharField(max_length=255)
     tool_version = models.TextField()
     state = models.CharField(max_length=16)
     create_time = models.DateTimeField(null=True, blank=True)
@@ -99,7 +96,7 @@ class MetricNumeric(models.Model):
     job = models.ForeignKey(Job)
     plugin = models.CharField(max_length=256)
     name = models.CharField(max_length=256)
-    value = models.DecimalField()
+    value = models.DecimalField(max_digits=22, decimal_places=7)
 
 
 class MetricText(models.Model):

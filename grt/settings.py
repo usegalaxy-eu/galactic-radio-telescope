@@ -148,3 +148,5 @@ if 'RAVEN_DSN' in os.environ:
     }
 else:
     RAVEN_CONFIG = {}
+
+REGISTRATION_OPEN = True

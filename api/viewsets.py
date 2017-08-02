@@ -1,5 +1,5 @@
 from rest_framework import viewsets, filters
-from api.serializers import UserSerializer, ToolSerializer, ToolVersionSerializer, GalaxyInstanceSerializer
+from api.serializers import GalaxyInstanceSerializer
 from api.models import GalaxyInstance
 
 

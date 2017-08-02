@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from web.models import Tool, ToolVersion, GalaxyInstance
+from api.models import GalaxyInstance
 
 
 class GalaxyInstanceSerializer(serializers.ModelSerializer):
