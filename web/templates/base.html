@@ -1,5 +1,4 @@
 {% load bootstrap_themes %}
-{% load account_tags %}
 {% load i18n %}
 {% load staticfiles %}
 {% load fontawesome %}
@@ -96,8 +95,6 @@ function pointToLayer(feature, latlng) {
 								<span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{% url 'account_settings' %}">Settings</a></li>
-								<li><a href="{% url 'account_logout' %}">Log out</a></li>
 								<li class="divider"></li>
 								<li><a href="{% url 'owned-galaxy-instance-list' %}">My Galaxies</a></li>
 								<li><a href="{% url 'galaxy-instance-create' %}">Register New Galaxy</a></li>
@@ -110,12 +107,10 @@ function pointToLayer(feature, latlng) {
 						</li>
 					{% else %}
 						<li>
-							<a href="{% url 'account_signup' %}">
 								Signup
 							</a>
 						</li>
 						<li>
-							<a href="{% url 'account_login' %}">
 								Login
 							</a>
 						</li>
