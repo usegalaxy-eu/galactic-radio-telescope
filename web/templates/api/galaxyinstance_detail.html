@@ -3,16 +3,7 @@
 
 {% block page_title %}Galactic Radio Telescope - Instance{% endblock %}
 
-{% block body %}
-<style type="text/css">
-a.tag {
-    text-decoration: none;
-    background: #eeeeee;
-    padding: .4em;
-    margin: .2em;
-    color: #2c3e50;
-}
-</style>
+{% block content %}
 <div class="container">
     <h1>{{ object.title  }}
         {% if request.user in object.owners.all %}
@@ -22,61 +13,17 @@ a.tag {
         {% endif %}
     </h1>
 
-    <div class="col-md-4">
-        <p>
-            {{ object.description }}
-        </p>
-    <div id="map" class="map" style="height: 200px"></div>
-        <script type="text/javascript">
-        fetch('{% url "galaxy-map" object.id %}', {
-            method: 'GET',
-            credentials: 'same-origin'
-        }).then(function(response) {
-            return response.json();
-        }).then(function(json) {
-
-            var map = L.map('map').setView([{{object.latitude | safe}}, {{object.longitude | safe}}], 6);
-
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            L.geoJson([json], {
-                onEachFeature: onEachFeature,
-                pointToLayer: pointToLayer,
-            }).addTo(map);
-        });
-        </script>
-
-    </div>
-    <div class="col-md-8">
-        {% if object.public or request.user in object.owners.all %}
-            <table class="table table-striped">
-                <tbody>
-                    {% if request.user in object.owners.all %}
-                    <tr><td>ID</td><td><code>{{ object.id }}</code></td></tr>
-                    <tr><td>API Key</td><td><code>{{ object.api_key }}</code></td></tr>
-                    {% endif %}
-                    <tr><td>URL</td><td>{{ object.url }}</td></tr>
-                    <tr><td>Users - Recent</td><td>{{ object.users_recent_data }}</td></tr>
-                    <tr><td>Users - Total</td><td>{{ object.users_total_data }}</td></tr>
-                    <tr><td>Jobs Run - Recent</td><td>{{ object.jobs_run_data }}</td></tr>
-
-                    <tr>
-                        <td>Tags</td>
-                        <td>
-                            {% for tag in object.tags.all %}
-                            <a class="tag" href="{% url 'tagged-galaxy-instance-list' tag.name %}">
-                            {{ tag }}
-                            </a>
-                            {% endfor %}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        {% else %}
-            <p>This Galaxy instance has elected to keep their data private</p>
-        {% endif %}
+    <div class="col-md-12">
+       <table class="table table-striped">
+           <tbody>
+               <tr><td>Description</td><td>{{ object.description }}</td></tr>
+               <tr><td>ID</td><td><code>{{ object.id }}</code></td></tr>
+               {% if request.user in object.owners.all %}
+               <tr><td>API Key</td><td><code>{{ object.api_key }}</code></td></tr>
+               {% endif %}
+               <tr><td>URL</td><td><a href="{{ object.url }}">{{ object.url }}</a></td></tr>
+           </tbody>
+       </table>
     </div>
 </div>
 {% endblock %}

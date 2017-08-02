@@ -3,7 +3,7 @@
 {% load bootstrap3 %}
 
 {% block page_title %}Galactic Radio Telescope - Instance{% endblock %}
-{% block body %}
+{% block content %}
 <div class="container">
     <h1>Success!</h1>
     <p>
@@ -13,8 +13,7 @@
     <h2>Step 1</h2>
     <p>
         Download your configuration file to
-        <code>$GALAXY_ROOT/scripts/grt.yml</code>, and consider customising the
-        tags and the location sharing feature, if you wish to opt-in.
+        <code>$GALAXY_ROOT/scripts/grt.yml</code>
 <pre style="color: black">
 galaxy_config: config/galaxy.ini
 
@@ -25,27 +24,14 @@ grt:
     # Galaxy Project offers a public galactic-radio-telescope instance, however
     # you are free to run your own if you need. We would love it if you were
     # willing and able to contribute your data publicly.
-    url: https://telescope.galaxyproject.org/
-    # Some metadata about your galaxy instance
-    metadata:
-        url: "{{ object.url }}"
-        title: "{{ object.title }}"
-        description: |
-            {{ object.description }}
-        # Is the instance open to the public?
-        {% if object.public %}
-        public: True
-        {% else %}
-        public: False
-        {% endif %}
-        # Optional Location
-        latitude: 0.00
-        longitude: 0.00
-        # Owners (these are the usernames of users registered with the galactic-radio-telescope system.)
-        owners:
-            - {{ request.user }}
+    url: http://localhost:8080
+    # Are you willing to share your toolbox? I.e. what tools are installed.
+    # If your instance is public, this can help us direct users to your
+    # instance.
+    share_toolbox: True
 
-blacklist:
+
+sanitization:
     # Blacklist the entire tool from appearing
     tools:
         - __SET_METADATA__
@@ -53,12 +39,8 @@ blacklist:
     # Or you can blacklist individual parameters from being submitted, e.g. if
     # you have API keys as a tool parameter.
     tool_params:
-        # If you wish to remove a specific parameter from *all* tools, you can
-        # do this by setting the name under `__all__`
-        __any__:
-            - chromInfo
         # Or to blacklist under a specific tool, just specify the ID
-        edu.tamu.cpt.admin.metadataFetch:
+        some_tool_id:
             - dbkey
             # If you need to specify a parameter multiple levels deep, you can
             # do that as well. Currently we only support blacklisting via the
@@ -81,7 +63,7 @@ python $GALAXY_ROOT/scripts/grt.py -c $GALAXY_ROOT/scripts/grt.yml -r $GALAXY_RO
 </pre>
     You can run the script at any time and it will generate a directory of
     reports. These are not immediately uploaded to the Galactic Radio
-    Telescope, this is can be done in a separate process:
+    Telescope, this is done in a separate process:
 
 <pre style="color: black">
 #!/bin/bash
