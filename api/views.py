@@ -86,7 +86,6 @@ def v2_upload_data(request):
     if not re.match(r'^[0-9.]+$', report_identifier):
         return HttpResponse('{"state": "error", "message": "Invalid report_identifier"}', status=400)
 
-
     meta_file = os.path.join(galaxy.report_dir, report_identifier + '.json')
     data_file = os.path.join(galaxy.report_dir, report_identifier + '.tar.gz')
 
