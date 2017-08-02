@@ -13,7 +13,11 @@
 		<p>
 			Please note that this page is ONLY for registering and editing your Galaxy instance.
 		</p>
-        <p><a class="btn btn-primary btn-lg" role="button" href="login">Sign in / Register »</a></p>
+		{%if request.user.is_authenticated %}
+		<p><a class="btn btn-primary btn-lg" role="button" href="{% url 'owned-galaxy-instance-list' %}">Manage Galaxies »</a></p>
+		{% else %}
+		<p><a class="btn btn-primary btn-lg" role="button" href="{% url 'registration_register' %}">Sign in / Register »</a></p>
+		{% endif %}
 	</div>
 </div>
 {% endblock %}
