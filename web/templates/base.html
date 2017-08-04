@@ -24,7 +24,7 @@
 					{%if request.user.is_authenticated %}
 						<li><a href="{% url 'owned-galaxy-instance-list' %}">My Galaxies</a></li>
 						<li><a href="{% url 'galaxy-instance-create' %}">Register New Galaxy</a></li>
-						<li><a href="{% url 'auth_logout' %}">Logout</a></li>
+						<li><a href="{% url 'auth_logout' %}?next=/grt/">Logout</a></li>
 					{% else %}
 						<li><a href="{% url 'registration_register' %}?next=/grt/">Signup</a></li>
 						<li><a href="{% url 'auth_login' %}?next=/grt/">Login</a></li>
