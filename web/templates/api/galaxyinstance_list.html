@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load fontawesome %}
+
+{% block page_title %}Galactic Radio Telescope - Directory{% endblock %}
+{% block content %}
+<style type="text/css">
+.card {
+    border: 1px solid #aaaaaa;
+    padding: 0px;
+    margin: 1em;
+    min-height: 15em;
+    max-height: 15em;
+    position: relative;
+}
+.card .card-title{
+    width: 100%;
+    background: #18bc9c;
+    color: white;
+    margin: 0px;
+    padding: .9em;
+}
+
+.card-title h3{
+    margin: 0px;
+}
+
+.card-content{
+    padding: 1em;
+    text-overflow: ellipsis;
+
+}
+
+.card-footer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 0.5em;
+    background: #eeeeee;
+}
+</style>
+
+<div class="container">
+    <h1>Galaxy Directory</h1>
+    <div class="row">
+    {% for galaxy in object_list %}
+        <a href="{% url 'galaxy-instance-detail' galaxy.id %}">
+        <div class="col-md-3 card">
+            <div class="card-title">
+                <h3>{{ galaxy.title }}</h3>
+            </div>
+            <div class="card-content">
+                {{ galaxy.description }}
+            </div>
+            <div class="card-footer">
+                {% if galaxy.users_recent and galaxy.jobs_run %}
+                {{ galaxy.users_recent }} {% fontawesome_icon 'user' %}
+                {{ galaxy.jobs_run }} {% fontawesome_icon 'circle' %}
+                {% else %}
+                Waiting for data
+                {% endif %}
+            </div>
+        </div>
+        </a>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

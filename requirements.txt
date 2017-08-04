@@ -1,9 +1,5 @@
-Django==1.9.2
-django-bootstrap-themes
-django-bootstrap3
-jsonfield
-django-user-accounts
-django-fontawesome
+Django
 djangorestframework
-raven
-django-tagulous
+django-registration
+psycopg2
+django-postgres-copy

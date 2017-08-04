@@ -1,248 +1,11 @@
-from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView
-from django.shortcuts import get_object_or_404
-from django.core.urlresolvers import reverse_lazy
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, HttpResponseRedirect
-from django.db import transaction
-from django.core.paginator import Paginator
-from django.core.paginator import EmptyPage
-from django.core.paginator import PageNotAnInteger
-from django.contrib.auth.models import User
-from .models import GalaxyInstance, Tool, ToolVersion, Job, IntegerDataPoint
-import re
 import json
-import datetime
-import logging
-log = logging.getLogger(__name__)
+import re
+import os
+import subprocess
 
-
-@transaction.atomic
-@csrf_exempt
-def v1_upload_data(request):
-    """Accept uploaded data regarding jobs"""
-    # Must be a POST
-    if request.method != 'POST':
-        return HttpResponse(content='Must be a POST', status=405)
-
-    # Must be able to parse JSON. TODO: Limit request sizes?
-    data = (request.body).decode('utf-8')
-    try:
-        data = json.loads(data)
-    except Exception as e:
-        log.warning(e)
-        # Bad request
-        return HttpResponse(content='Unparseable data', status=400)
-
-    metadata = data.get('meta', {})
-
-    # Instance UUID must be available
-    instance_uuid = metadata.get('uuid', None)
-    if instance_uuid is None:
-        return HttpResponse('No instance UUID provided', status=400)
-
-    instance = get_object_or_404(GalaxyInstance, uuid=instance_uuid)
-
-    # Instance API key must be available
-    instance_api_key = metadata.get('api_key', None)
-    if instance_api_key is None:
-        return HttpResponse('No instance API key provided', status=400)
-
-    # Instance API key must be correct.
-    if not compare(str(instance_api_key), str(instance.api_key)):
-        return HttpResponse(status=403)
-
-    # First update Galaxy instance metadata
-    instance_users_recent = IntegerDataPoint(value=metadata.get('active_users', 0))
-    instance_users_recent.save()
-    instance.users_recent.add(instance_users_recent)
-
-    instance_users_total = IntegerDataPoint(value=metadata.get('total_users', 0))
-    instance_users_total.save()
-    instance.users_total.add(instance_users_total)
-
-    instance_jobs_run = IntegerDataPoint(value=metadata.get('recent_jobs', 0))
-    instance_jobs_run.save()
-    instance.jobs_run.add(instance_jobs_run)
-
-    instance.version = metadata.get('galaxy_version', 'Unknown')
-    instance.tags = metadata.get('tags', [])
-    if 'public' in instance.tags:
-        instance.public = True
-    else:
-        instance.public = False
-    instance.description = metadata.get('description', '').strip()
-    instance.humanname = metadata.get('name', 'A Galaxy Instance')
-    if len(metadata.get('url', '').strip()) > 0:
-        instance.url = metadata['url']
-    else:
-        instance.url = None
-    instance.norm_users_recent = metadata.get('active_users', 0)
-
-    location = metadata.get('location', {'lat': 0, 'lon': 0})
-    instance.latitude = location.get('lat', 0)
-    instance.longitude = location.get('lon', 0)
-
-    instance.save()
-
-    tools = {}
-    # Next we process the acknowleged tools:
-    for idx, unsafe_tool_data in enumerate(data.get('tools', [])):
-        # 'tool_id': 'xmfa2tbl',
-        # 'tool_version': '2.4.0.0',
-        # 'tool_name': 'Convert XMFA to a percent identity table',
-        tool_data = {
-            'tool_id': unsafe_tool_data.get('tool_id', None),
-            'tool_version': unsafe_tool_data.get('tool_version', None),
-            'tool_name': unsafe_tool_data.get('tool_name', None)
-        }
-        for key in tool_data.keys():
-            if tool_data[key] is not None:
-                sanitized_value = re.sub('[^A-Za-z0-9_./ -]+', '', tool_data[key])
-                if tool_data[key] != sanitized_value:
-                    log.warn("Sanitizied %s from %s to %s", key, tool_data[key], sanitized_value)
-                tool_data[key] = sanitized_value
-            else:
-                tool_data[key] = ""
-
-        # Tool data is now theoretically safe.
-        tool, tool_created = Tool.objects.get_or_create(
-            tool_id=tool_data['tool_id'],
-            tool_name=tool_data['tool_name']
-        )
-        tool_version, tv_created = ToolVersion.objects.get_or_create(
-            tool=tool,
-            version=tool_data['tool_version']
-        )
-
-        tools[idx] = tool_version
-
-    # Now we need to process the list of new jobs sent to us by the
-    # client.
-    for unsafe_job_data in data.get('jobs', []):
-        # Will throw an error on bad data, which is OK.
-        tool_idx = int(unsafe_job_data.get('tool', 0))
-        if tool_idx not in tools:
-            return HttpResponse(content='Unknown tool id %s' % tool_idx, status=400)
-        else:
-            tool = tools[tool_idx]
-
-        job_date = int(unsafe_job_data.get('date', 0))
-
-        metrics = unsafe_job_data.get('metrics', {})
-
-        job = Job(
-            instance=instance,
-            tool=tool,
-            date=datetime.datetime.fromtimestamp(job_date),
-            metrics_core_runtime_seconds=int(metrics.get('core_runtime_seconds', 0)),
-            metrics_core_galaxy_slots=int(metrics.get('core_galaxy_slots', 0)),
-        )
-        job.save()
-
-    return HttpResponse(status=200)
-
-
-class GalaxyInstanceEdit(UpdateView):
-    model = GalaxyInstance
-    slug_field = 'uuid'
-    fields = ('url', 'humanname', 'description', 'public', 'latitude', 'longitude', 'tags')
-
-
-class GalaxyInstanceView(DetailView):
-    model = GalaxyInstance
-    slug_field = 'uuid'
-
-    def get_context_data(self, **kwargs):
-        context = super(GalaxyInstanceView, self).get_context_data(**kwargs)
-        context['recent_jobs'] = Job.objects.all().filter(instance=context['object']).order_by('-date')[0:10]
-        return context
-
-
-class GalaxyInstanceCreateSuccess(DetailView):
-    model = GalaxyInstance
-    slug_field = 'uuid'
-    template_name_suffix = '_create_success'
-
-    def get_context_data(self, **kwargs):
-        context = super(GalaxyInstanceCreateSuccess, self).get_context_data(**kwargs)
-        full_url = self.request.build_absolute_uri(str(reverse_lazy('galaxy-instance-create-success', args=(self.object.uuid, ))))
-        components = full_url.split('/')[0:-3] + ['api', 'v1', 'upload']
-        context['api_url'] = '/'.join(components)
-        return context
-
-
-class GalaxyInstanceCreate(CreateView):
-    model = GalaxyInstance
-    fields = ('url', 'humanname', 'description', 'public', 'latitude', 'longitude', 'tags')
-    template_name_suffix = '_create'
-
-    def get_success_url(self):
-        return reverse_lazy(
-            'galaxy-instance-create-success',
-            kwargs={'slug': self.object.uuid}
-        )
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.owner = self.request.user
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class GalaxyInstanceListView(ListView):
-    model = GalaxyInstance
-
-
-class TrainingNetworkHome(ListView):
-    model = User
-
-
-class TaggedGalaxyInstanceListView(ListView):
-    model = GalaxyInstance
-    template_name_suffix = '_list'
-
-    def get_context_data(self, **kwargs):
-        context = super(TaggedGalaxyInstanceListView, self).get_context_data(**kwargs)
-        context['slug'] = self.kwargs['slug']
-        import pprint; pprint.pprint(context)
-        return context
-
-    def get_queryset(self):
-        return GalaxyInstance.objects.filter(tags=self.kwargs['slug'])
-
-
-class OwnedGalaxyInstanceListView(ListView):
-    model = GalaxyInstance
-
-    def get_queryset(self):
-        return GalaxyInstance.objects.filter(owner=self.request.user)
-
-
-class ToolView(DetailView):
-    model = Tool
-    slug_field = 'id'
-
-
-class ToolList(ListView):
-    model = Tool
-
-    def get_context_data(self, **kwargs):
-        context = super(ToolList, self).get_context_data(**kwargs)
-        paginator = Paginator(self.object_list, 25)
-
-        page = self.request.GET.get('page')
-
-        try:
-            page_objects = paginator.page(page)
-        except PageNotAnInteger:
-            page_objects = paginator.page(1)
-        except EmptyPage:
-            page_objects = paginator.page(paginator.num_pages)
-
-        context['objects'] = page_objects
-        return context
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from api.models import GalaxyInstance
 
 
 def compare(val1, val2):
@@ -266,39 +29,88 @@ def compare(val1, val2):
     return result == 0
 
 
-def galaxy_geojson(request, pk=None):
-    if pk is not None:
-        galaxies = [GalaxyInstance.objects.get(uuid=pk)]
-    else:
-        galaxies = GalaxyInstance.objects.all()
+def authenticate(request):
+    if request.method != 'POST':
+        return HttpResponse(content='Must be a POST', status=405)
 
-    data = {
-        "type": "FeatureCollection",
-        "features": []
-    }
+    auth_token = request.META.get('HTTP_AUTHORIZATION', None)
+    if not auth_token:
+        return HttpResponse('{"state": "error", "message": "Bad authentication credentials"}', status=400)
 
-    for galaxy in galaxies:
-        if galaxy.public or request.user == galaxy.owner or request.user.is_superuser:
-            feature = {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [ galaxy.longitude, galaxy.latitude ],
-                },
-                'properties': {
-                    'name': galaxy.humanname,
-                    'url': galaxy.url,
-                    'description': galaxy.description,
-                    'id': str(galaxy.uuid),
-                    'tags': [str(x) for x in galaxy.tags.all()],
-                }
-            }
+    gx_id, api_key = auth_token.split(':')
+    # Find the Galaxy Instance with this username (uuid).
+    try:
+        galaxy = GalaxyInstance.objects.get(id=gx_id)
+    except GalaxyInstance.DoesNotExist:
+        return HttpResponse('{"state": "error", "message": "Bad authentication credentials"}', status=400)
 
-            if 'university' in galaxy.tags:
-                feature['properties'].update({
-                    'class': 'college',
-                })
+    if not compare(str(galaxy.api_key), api_key):
+        return HttpResponse('{"state": "error", "message": "Bad authentication credentials"}', status=400)
 
-            data['features'].append(feature)
+    return galaxy
 
-    return HttpResponse(content=json.dumps(data), status=200)
+
+# Create your views here.
+@csrf_exempt
+def whoami(request):
+    galaxy = authenticate(request)
+    if not isinstance(galaxy, GalaxyInstance):
+        return galaxy
+
+    return HttpResponse(
+        content=json.dumps({
+            'galaxy': galaxy.title,
+            'uploaded_reports': galaxy.uploaded_reports()
+        }),
+        status=200
+    )
+
+
+@csrf_exempt
+def v2_upload_data(request):
+    """Accept uploaded data regarding jobs"""
+    galaxy = authenticate(request)
+    if not isinstance(galaxy, GalaxyInstance):
+        return galaxy
+
+    # We are permissive about uploads because we know we can go back and wipe
+    # them out later / blacklist this instance if they're misbehaving. This is
+    # further ameliorated by the fact that reports are not immediately public,
+    # we process them offline. So this is not just a place people can dump
+    # files and have them be web accessible.
+    report_identifier = request.POST.get('identifier')
+
+    if len(request.FILES.keys()) != 2 or 'data' not in request.FILES or 'meta' not in request.FILES:
+        return HttpResponse('{"state": "error", "message": "Bad data"}', status=400)
+
+    if not re.match(r'^[0-9.]+$', report_identifier):
+        return HttpResponse('{"state": "error", "message": "Invalid report_identifier"}', status=400)
+
+    meta_file = os.path.join(galaxy.report_dir, report_identifier + '.json')
+    data_file = os.path.join(galaxy.report_dir, report_identifier + '.tar.gz')
+
+    with open(meta_file, 'wb+') as handle:
+        for chunk in request.FILES['meta'].chunks():
+            handle.write(chunk)
+
+    with open(data_file, 'wb+') as handle:
+        for chunk in request.FILES['data'].chunks():
+            handle.write(chunk)
+
+    # # We should also validate their upload.
+    with open(meta_file, 'r') as handle:
+        data = json.load(handle)
+        report_hash = data['report_hash']
+        algo, value = report_hash.split(':')
+        if algo == 'sha256':
+            real_value = subprocess.check_output(['sha256sum', data_file]).decode('utf-8')
+            real_value = real_value[0:real_value.index(' ')]
+            if value != real_value:
+                os.unlink(data_file)
+                os.unlink(meta_file)
+                return HttpResponse(content='{"state": "error", "message": "Hash mismatch %s != %s"}' % (real_value, value), status=200)
+        else:
+            return HttpResponse(content='{"state": "error", "message": "Unsupported hash"}', status=200)
+
+    # Otherwise, we're happy with what they've submitted.
+    return HttpResponse(content='{"state": "success"}', status=200)

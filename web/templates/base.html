@@ -1,0 +1,50 @@
+{% load bootstrap_themes %}
+{% load i18n %}
+{% load staticfiles %}
+{% load fontawesome %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>{% block page_title %}Galactic Radio Telescope{% endblock %}</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		{% bootstrap_styles theme='flatly' type='min.css' %}
+		{% bootstrap_script use_min=True %}
+		{% fontawesome_stylesheet %}
+	</head>
+	<body>
+		<div class="navbar navbar-inverse" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<a href="{% url 'home' %}" class="navbar-brand">Galactic Radio Telescope</a>
+				</div>
+				<div id="navbar-main" aria-expanded="false" style="height: 1px;">
+					<ul class="nav navbar-nav navbar-right">
+					{%if request.user.is_authenticated %}
+						<li><a href="{% url 'owned-galaxy-instance-list' %}">My Galaxies</a></li>
+						<li><a href="{% url 'galaxy-instance-create' %}">Register New Galaxy</a></li>
+						<li><a href="{% url 'auth_logout' %}?next=/grt/">Logout</a></li>
+					{% else %}
+						<li><a href="{% url 'registration_register' %}?next=/grt/">Signup</a></li>
+						<li><a href="{% url 'auth_login' %}?next=/grt/">Login</a></li>
+					{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			{% block content %}{% endblock %}
+			<footer>
+				<hr />
+				<div class="row">
+					<div class="col-lg-12">
+						<p>&copy; Galaxy Project</p>
+                        <p>Code <a href="https://github.com/erasche/galactic-radio-telescope">available</a> under AGPLv3.</p>
+					</div>
+				</div>
+				</div>
+			</footer>
+		</div>
+	</body>
+</html>

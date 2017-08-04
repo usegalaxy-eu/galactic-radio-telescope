@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load fontawesome %}
+{% load bootstrap3 %}
+
+{% block page_title %}Galactic Radio Telescope - Instance{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>{{ object.title }}</h1>
+    <div class="row">
+        <div class="col-md-12">
+            Your Galaxy instance's GRT API key is: <code>{{ object.api_key }}</code>
+        </div>
+        <div class="col-md-12">
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-default btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

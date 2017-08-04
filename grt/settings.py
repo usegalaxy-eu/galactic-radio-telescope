@@ -41,10 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'tagulous',
     'rest_framework',
-    'raven.contrib.django.raven_compat',
+    # 'raven.contrib.django.raven_compat',
     'fontawesome',
     'bootstrap3',
-    'account',
+    'web',
     'api',
 ]
 
@@ -57,8 +57,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "account.middleware.LocaleMiddleware",
-    "account.middleware.TimezoneMiddleware",
 ]
 
 ROOT_URLCONF = 'grt.urls'
@@ -74,7 +72,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                "account.context_processors.account",
             ],
         },
     },
@@ -88,8 +85,12 @@ WSGI_APPLICATION = 'grt.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -134,15 +135,9 @@ STATIC_URL = '/grt/static/'
 SITE_ID = 1
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-
-
-ACCOUNT_SIGNUP_REDIRECT_URL = '/grt/'
-ACCOUNT_LOGIN_REDIRECT_URL = '/grt/'
-ACCOUNT_LOGOUT_REDIRECT_URL = '/grt/'
-ACCOUNT_PASSWORD_CHANGE_REDIRECT_URL = '/grt/'
-ACCOUNT_PASSWORD_RESET_REDIRECT_URL = '/grt/'
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/grt/'
-ACCOUNT_SETTINGS_REDIRECT_URL = '/grt/'
+GRT_UPLOAD_DIRECTORY = os.path.join(BASE_DIR, 'uploads')
+if not os.path.exists(GRT_UPLOAD_DIRECTORY):
+    os.makedirs(GRT_UPLOAD_DIRECTORY)
 
 SERIALIZATION_MODULES = {
     'xml':    'tagulous.serializers.xml_serializer',
@@ -157,3 +152,5 @@ if 'RAVEN_DSN' in os.environ:
     }
 else:
     RAVEN_CONFIG = {}
+
+REGISTRATION_OPEN = True

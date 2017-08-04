@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import GalaxyInstance, Job, Tool, ToolVersion
+from .models import GalaxyInstance
+
 
 admin.site.register(GalaxyInstance)
-admin.site.register(Job)
-admin.site.register(Tool)
-admin.site.register(ToolVersion)

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block page_title %}Galactic Radio Telescope - Directory{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Galaxy Directory</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Users</th>
+                <th>Jobs</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for galaxy in object_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'galaxy-instance-detail' galaxy.id %}">
+                            {{ galaxy.title }}
+                        </a>
+                    </td>
+                    <td><span class="sparkline">{{ galaxy.spark_users }}</span></td>
+                    <td><span class="sparkline">{{ galaxy.spark_jobs }}</span></td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <script type="text/javascript">
+$('.sparkline').sparkline('html', {width: '100px'});
+    </script>
+    <style type="text/css">
+.jqstooltip{
+    width: 5em;
+    height: 4em;
+}
+    </style>
+</div>
+{% endblock %}

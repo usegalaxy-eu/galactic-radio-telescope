@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load fontawesome %}
+
+{% block page_title %}Galactic Radio Telescope - Instance{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ object.title  }}
+        {% if request.user in object.owners.all %}
+        <a href="{% url 'galaxy-instance-edit' object.id %}">
+            {% fontawesome_icon 'pencil' %}
+        </a>
+        {% endif %}
+    </h1>
+
+    <div class="col-md-12">
+       <table class="table table-striped">
+           <tbody>
+               <tr><td>Description</td><td>{{ object.description }}</td></tr>
+               <tr><td>ID</td><td><code>{{ object.id }}</code></td></tr>
+               {% if request.user in object.owners.all %}
+               <tr><td>API Key</td><td><code>{{ object.api_key }}</code></td></tr>
+               {% endif %}
+               <tr><td>URL</td><td><a href="{{ object.url }}">{{ object.url }}</a></td></tr>
+			   <tr><td>Users Recent</td><td>{{ object.users_recent }}</td></tr>
+			   <tr><td>Users Total</td><td>{{ object.users_total }}</td></tr>
+			   <tr><td>Total Jobs Run</td><td>{{ object.jobs_run }}</td></tr>
+           </tbody>
+       </table>
+    </div>
+</div>
+{% endblock %}
