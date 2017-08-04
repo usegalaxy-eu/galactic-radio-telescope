@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 <div class="jumbotron">
@@ -14,10 +15,10 @@
 			Please note that this page is ONLY for registering and editing your Galaxy instance.
 		</p>
 		{%if request.user.is_authenticated %}
-		<p><a class="btn btn-primary btn-lg" role="button" href="{% url 'owned-galaxy-instance-list' %}">Manage Galaxies »</a></p>
+		<a class="btn btn-primary btn-lg" role="button" href="{% url 'owned-galaxy-instance-list' %}">Manage Galaxies »</a>
 		{% else %}
-						<li><a href="{% url 'auth_login' %}?next=/grt/">Login »</a></li>
-		<p><a class="btn btn-primary btn-lg" role="button" href="{% url 'registration_register' %}?next=/grt/">Register »</a></p>
+		<a class="btn btn-primary btn-lg" role="button" href="{% url 'auth_login' %}?next=/grt/">{% trans 'Log in' %} »</a>
+		<a class="btn btn-primary btn-lg" role="button" href="{% url 'registration_register' %}?next=/grt/">Register »</a>
 		{% endif %}
 	</div>
 </div>
