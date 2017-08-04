@@ -42,3 +42,4 @@ class Command(BaseCommand):
         instance.jobs_run = meta['jobs']['ok']
         instance.last_import = report_id
         instance.save()
+        print("Update %s" % instance)

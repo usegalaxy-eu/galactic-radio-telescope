@@ -7,8 +7,8 @@ import sys
 GRT_URL = 'http://localhost:8000/grt/'
 
 # First, check status of uploaded data.
-galaxy_id = 'e329b603-7921-40c3-89d9-27c683ccbb46'
-api_key = 'a09678e5-2b1f-4444-98b3-e22cd1c0b2fa'
+galaxy_id = '6eb03810-fbf9-4faf-8f80-41ba7a8c6d4f'
+api_key = '2ae1c3f2-7d9f-407a-8018-cdec4bca5296'
 headers = {
     'AUTHORIZATION': galaxy_id + ':' + api_key,
 }

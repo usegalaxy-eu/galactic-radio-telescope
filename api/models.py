@@ -21,9 +21,9 @@ class GalaxyInstance(models.Model):
     # The instance's information should be published. This will include a
     # logo/domain name page for each instance.
 
-    users_recent = models.TextField(blank=True)
-    users_total = models.TextField(blank=True)
-    jobs_run = models.TextField(blank=True)
+    users_recent = models.IntegerField(default=0)
+    users_total = models.IntegerField(default=0)
+    jobs_run = models.IntegerField(default=0)
 
     # Owner of this Galaxy instance
     owners = models.ManyToManyField(User)
