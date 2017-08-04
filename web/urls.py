@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^galaxy/create$', GalaxyInstanceCreate.as_view(), name='galaxy-instance-create'),
     url(r'^galaxy/owned$', OwnedGalaxyInstanceListView.as_view(), name='owned-galaxy-instance-list'),
 
-    url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
-    url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/edit$', GalaxyInstanceEdit.as_view(), name='galaxy-instance-edit'),
-    url(r'^galaxy/(?P<slug>[0-9a-f-]{36})/success$', GalaxyInstanceCreateSuccess.as_view(), name='galaxy-instance-create-success'),
+    url(r'^galaxy/(?P<slug>[0-9]+)/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
+    url(r'^galaxy/(?P<slug>[0-9]+)/edit$', GalaxyInstanceEdit.as_view(), name='galaxy-instance-edit'),
+    url(r'^galaxy/(?P<slug>[0-9]+)/success$', GalaxyInstanceCreateSuccess.as_view(), name='galaxy-instance-create-success'),
 ]

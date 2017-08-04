@@ -36,7 +36,7 @@ class GalaxyInstance(models.Model):
 
     @property
     def report_dir(self):
-        instance_report_dir = os.path.join(settings.GRT_UPLOAD_DIRECTORY, id)
+        instance_report_dir = os.path.join(settings.GRT_UPLOAD_DIRECTORY, str(self.id))
         if not os.path.exists(instance_report_dir):
             os.makedirs(instance_report_dir)
         return instance_report_dir
