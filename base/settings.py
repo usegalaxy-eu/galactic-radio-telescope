@@ -37,11 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bootstrap_themes',
     'django.contrib.sites',
-    'tagulous',
     'rest_framework',
-    # 'raven.contrib.django.raven_compat',
     'fontawesome',
     'bootstrap3',
     'web',
@@ -59,7 +56,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'grt.urls'
+ROOT_URLCONF = 'base.urls'
 
 TEMPLATES = [
     {
@@ -77,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'grt.wsgi.application'
+WSGI_APPLICATION = 'base.wsgi.application'
 
 
 # Database
@@ -138,13 +135,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 GRT_UPLOAD_DIRECTORY = os.path.join(BASE_DIR, 'uploads')
 if not os.path.exists(GRT_UPLOAD_DIRECTORY):
     os.makedirs(GRT_UPLOAD_DIRECTORY)
-
-SERIALIZATION_MODULES = {
-    'xml':    'tagulous.serializers.xml_serializer',
-    'json':   'tagulous.serializers.json',
-    'python': 'tagulous.serializers.python',
-    'yaml':   'tagulous.serializers.pyyaml',
-}
 
 if 'RAVEN_DSN' in os.environ:
     RAVEN_CONFIG = {

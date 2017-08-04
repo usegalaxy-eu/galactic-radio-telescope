@@ -1,5 +1,5 @@
-{% load bootstrap_themes %}
 {% load i18n %}
+{% load bootstrap3 %}
 {% load staticfiles %}
 {% load fontawesome %}
 
@@ -9,8 +9,7 @@
 		<meta charset="utf-8">
 		<title>{% block page_title %}Galactic Radio Telescope{% endblock %}</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		{% bootstrap_styles theme='flatly' type='min.css' %}
-		{% bootstrap_script use_min=True %}
+		{% bootstrap_css %}
 		{% fontawesome_stylesheet %}
 	</head>
 	<body>
