@@ -13,7 +13,6 @@ from django.contrib.auth.models import User
 
 class GalaxyInstance(models.Model):
     """A single galaxy site. Corresponds to a single galaxy.ini"""
-    id = models.UUIDField(primary_key=True, default=pyuuid.uuid4, editable=False)
     # Optional
     url = models.URLField(null=True, help_text="Instance URL")
     title = models.CharField(max_length=256, null=True, help_text="The name / title of the instance. E.g. GalaxyP")
@@ -37,8 +36,7 @@ class GalaxyInstance(models.Model):
 
     @property
     def report_dir(self):
-        uuid = str(self.id)
-        instance_report_dir = os.path.join(settings.GRT_UPLOAD_DIRECTORY, uuid[0:2], uuid[2:4], uuid)
+        instance_report_dir = os.path.join(settings.GRT_UPLOAD_DIRECTORY, id)
         if not os.path.exists(instance_report_dir):
             os.makedirs(instance_report_dir)
         return instance_report_dir
@@ -83,7 +81,8 @@ class JobParam(models.Model):
     (some_param, 10), for repeats and other more complex ones, this comes as a
     giant JSON struct.
     """
-    job = models.ForeignKey(Job)
+    instance = models.ForeignKey(GalaxyInstance)
+    external_job_id = models.IntegerField(default=-1)
     name = models.CharField(max_length=256)
     value = models.TextField()
 
@@ -92,7 +91,8 @@ class MetricNumeric(models.Model):
     """
     Tuple of (name, type, value).
     """
-    job = models.ForeignKey(Job)
+    instance = models.ForeignKey(GalaxyInstance)
+    external_job_id = models.IntegerField(default=-1)
     plugin = models.CharField(max_length=256)
     name = models.CharField(max_length=256)
     value = models.DecimalField(max_digits=22, decimal_places=7)
@@ -102,7 +102,8 @@ class MetricText(models.Model):
     """
     Tuple of (name, type, value).
     """
-    job = models.ForeignKey(Job)
+    instance = models.ForeignKey(GalaxyInstance)
+    external_job_id = models.IntegerField(default=-1)
     plugin = models.CharField(max_length=256)
     name = models.CharField(max_length=256)
     value = models.CharField(max_length=256)

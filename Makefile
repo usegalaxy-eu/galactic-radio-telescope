@@ -7,3 +7,8 @@ launch_pg:
 
 kill_pg:
 	sudo docker ps | grep postgres | awk '{print $$1}' | xargs sudo docker kill
+
+refresh_pg:
+	$(MAKE) kill_pg
+	rm -rf .pgdata
+	$(MAKE) launch_pg

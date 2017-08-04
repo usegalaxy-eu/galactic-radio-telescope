@@ -37,10 +37,10 @@ def authenticate(request):
     if not auth_token:
         return HttpResponse('{"state": "error", "message": "Bad authentication credentials"}', status=400)
 
-    gx_uuid, api_key = auth_token.split(':')
+    gx_id, api_key = auth_token.split(':')
     # Find the Galaxy Instance with this username (uuid).
     try:
-        galaxy = GalaxyInstance.objects.get(id=gx_uuid)
+        galaxy = GalaxyInstance.objects.get(id=gx_id)
     except GalaxyInstance.DoesNotExist:
         return HttpResponse('{"state": "error", "message": "Bad authentication credentials"}', status=400)
 

@@ -2,3 +2,4 @@ Django
 djangorestframework
 django-registration
 psycopg2
+django-postgres-copy

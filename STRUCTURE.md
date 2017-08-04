@@ -30,7 +30,7 @@ ever so slightly to allow us some more freedom in how and when we process the da
 Data will be uploaded to per-instance folders. The structure will be as follows:
 
 ```
-<instance_id (uuid)>
+<instance_id>
 └── archives
     ├── 0.tar.gz
     ├── 0.json
