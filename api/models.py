@@ -15,12 +15,11 @@ class GalaxyInstance(models.Model):
     """A single galaxy site. Corresponds to a single galaxy.ini"""
     id = models.UUIDField(primary_key=True, default=pyuuid.uuid4, editable=False)
     # Optional
-    url = models.URLField(null=True, help_text="Publicly accesible instance URL")
+    url = models.URLField(null=True, help_text="Instance URL")
     title = models.CharField(max_length=256, null=True, help_text="The name / title of the instance. E.g. GalaxyP")
     description = models.TextField(null=True, help_text="Any extra description you wish to add.")
     # The instance's information should be published. This will include a
     # logo/domain name page for each instance.
-    public = models.BooleanField(default=False, help_text="Is the instance open to the public?")
 
     users_recent = models.TextField(blank=True)
     users_total = models.TextField(blank=True)

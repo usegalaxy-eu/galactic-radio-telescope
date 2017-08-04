@@ -43,7 +43,6 @@
     <h1>Galaxy Directory</h1>
     <div class="row">
     {% for galaxy in object_list %}
-        {% if galaxy.public or galaxy.owners in request.user or request.user.is_superuser %}
         <a href="{% url 'galaxy-instance-detail' galaxy.id %}">
         <div class="col-md-3 card">
             <div class="card-title">
@@ -53,13 +52,15 @@
                 {{ galaxy.description }}
             </div>
             <div class="card-footer">
+                {% if galaxy.users_recent and galaxy.jobs_run %}
                 {{ galaxy.users_recent }} {% fontawesome_icon 'user' %}
                 {{ galaxy.jobs_run }} {% fontawesome_icon 'circle' %}
-
+                {% else %}
+                Waiting for data
+                {% endif %}
             </div>
         </div>
         </a>
-        {% endif %}
     {% endfor %}
     </div>
 </div>

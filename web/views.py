@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 class GalaxyInstanceEdit(UpdateView):
     model = GalaxyInstance
     slug_field = 'id'
-    fields = ('url', 'title', 'description', 'public')
+    fields = ('url', 'title', 'description')
 
 
 class GalaxyInstanceView(DetailView):
@@ -41,7 +41,7 @@ class GalaxyInstanceCreateSuccess(DetailView):
 
 class GalaxyInstanceCreate(CreateView):
     model = GalaxyInstance
-    fields = ('url', 'title', 'description', 'public')
+    fields = ('url', 'title', 'description')
     template_name_suffix = '_create'
 
     def get_success_url(self):

@@ -7,7 +7,6 @@ class GalaxyInstanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = GalaxyInstance
         fields = (
-            'id', 'url', 'title', 'description', 'public', 'users_recent',
-            'users_total', 'jobs_run', 'latitude', 'longitude', 'tools',
-            'owners'
+            'id', 'url', 'title', 'description', 'users_recent', 'users_total',
+            'jobs_run', 'owners'
         )

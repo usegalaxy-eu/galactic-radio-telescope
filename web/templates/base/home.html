@@ -16,7 +16,8 @@
 		{%if request.user.is_authenticated %}
 		<p><a class="btn btn-primary btn-lg" role="button" href="{% url 'owned-galaxy-instance-list' %}">Manage Galaxies »</a></p>
 		{% else %}
-		<p><a class="btn btn-primary btn-lg" role="button" href="{% url 'registration_register' %}">Sign in / Register »</a></p>
+						<li><a href="{% url 'auth_login' %}?next=/grt/">Login »</a></li>
+		<p><a class="btn btn-primary btn-lg" role="button" href="{% url 'registration_register' %}?next=/grt/">Register »</a></p>
 		{% endif %}
 	</div>
 </div>
