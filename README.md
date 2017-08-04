@@ -13,8 +13,6 @@ should answer questions like:
 > If I'm mapping a 32 Gb FastQ dataset against a 1Mbp genome, what are the
 > *likely* minimum/optimal compute requirements
 
-![GRT Screenshot](./media/grt-screenshot.png)
-
 ## GRT Questions
 
 GRT needs to be focused on answering interesting questions to its target audience(s):
