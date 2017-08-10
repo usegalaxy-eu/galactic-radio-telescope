@@ -7,6 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from api.models import GalaxyInstance
+from registration.backends.simple.views import RegistrationView
 
 log = logging.getLogger(__name__)
 
@@ -66,3 +67,9 @@ class OwnedGalaxyInstanceListView(ListView):
 
     def get_queryset(self):
         return GalaxyInstance.objects.filter(owners__in=[self.request.user])
+
+
+class CustomRegistrationView(RegistrationView):
+
+    def get_success_url(self, user):
+        return reverse_lazy('home')

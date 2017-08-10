@@ -7,13 +7,18 @@ from .views import \
     GalaxyInstanceCreate, \
     GalaxyInstanceCreateSuccess, \
     GalaxyInstanceListView, \
-    OwnedGalaxyInstanceListView
+    OwnedGalaxyInstanceListView, \
+    CustomRegistrationView
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='base/home.html'), name='home'),
     url(r'^admin/', include(admin.site.urls), name='admin'),
-    url(r'^accounts/', include('registration.backends.simple.urls')),
-
+    url(r'^accounts/', include([
+        url(r'^register/$',
+                    CustomRegistrationView.as_view(),
+                    name='registration_register'),
+        url(r'', include('registration.auth_urls')),
+    ])),
     url(r'^galaxy/$', GalaxyInstanceListView.as_view(), name='galaxy-instance-list'),
     url(r'^galaxy/create$', GalaxyInstanceCreate.as_view(), name='galaxy-instance-create'),
     url(r'^galaxy/owned$', OwnedGalaxyInstanceListView.as_view(), name='owned-galaxy-instance-list'),
