@@ -6,6 +6,9 @@ import string
 
 import raven
 
+INSTALLED_APPS += [
+    'raven.contrib.django.raven_compat',
+]
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,7 +40,8 @@ DATABASES = {
 
 if 'RAVEN_DSN' in os.environ:
     RAVEN_CONFIG = {
-        'dsn': os.environ['RAVEN_DSN']
+        'dsn': os.environ['RAVEN_DSN'],
+        'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
     }
 else:
     RAVEN_CONFIG = {}
