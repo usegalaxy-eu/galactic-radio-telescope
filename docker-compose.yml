@@ -5,9 +5,9 @@ app:
     links:
       - db
     environment:
-      DJANGO_DEBUG: 'True'
+      DJANGO_DEBUG: 'False'
       DJANGO_ALLOWED_HOSTS: '*'
-      DJANGO_URL_PREFIX: ''
+      DJANGO_URL_PREFIX: 'grt-admin/'
 
 db:
     image: postgres:9.5
