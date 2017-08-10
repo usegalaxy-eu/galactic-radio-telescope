@@ -1,4 +1,4 @@
-# Galactic Radio Telescope
+# Galactic Radio Telescope [![Docker Repository on Quay](https://quay.io/repository/erasche/galactic-radio-telescope/status "Docker Repository on Quay")](https://quay.io/repository/erasche/galactic-radio-telescope)
 
 ![GRT Logo](media/grt-small.png)
 
