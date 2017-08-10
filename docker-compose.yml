@@ -1,0 +1,30 @@
+app:
+    build: .
+    ports:
+      - 8000:8000
+    links:
+      - db
+    environment:
+      DJANGO_DEBUG: 'True'
+      DJANGO_ALLOWED_HOSTS: '*'
+      DJANGO_URL_PREFIX: ''
+
+db:
+    image: postgres:9.5
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+dbbackup:
+    image: quay.io/tamu_cpt/postgres-backup:latest
+    environment:
+      MAX_BACKUPS: 5
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    links:
+      - db
+    volumes:
+      - ./pg_backup:/backup
