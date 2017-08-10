@@ -1,5 +1,5 @@
 app:
-    build: .
+    image: quay.io/erasche/galactic-radio-telescope:latest
     ports:
       - 8000:8000
     links:
