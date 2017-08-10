@@ -1,6 +1,9 @@
-# import json
-# import tarfile
-# import os
+import json
+import tarfile
+import os
+import uuid
+import tempfile
+import logging
 
 from api.models import GalaxyInstance, Job, JobParam, MetricNumeric, MetricText
 
@@ -11,13 +14,19 @@ from django.core.management.base import BaseCommand
 from postgres_copy import CopyMapping
 
 
+logging.basicConfig(level=logging.DEBUG)
+TMPDIR = os.path.join(tempfile.gettempdir(), 'grt')
+if not os.path.exists(TMPDIR):
+    os.makedirs(TMPDIR)
+
+
 class Command(BaseCommand):
     help = 'Load all data from the report directory.'
 
     def handle(self, *args, **options):
         # report_dir = settings.GRT_UPLOAD_DIRECTORY
         for instance in GalaxyInstance.objects.all():
-            for report_id in instance.new_reports():
+            for report_id in sorted(instance.new_reports()):
                 self.import_report(instance, report_id)
 
     def fix_name(self, member):
@@ -25,22 +34,45 @@ class Command(BaseCommand):
             return 'jobs'
         elif '.metric_num.tsv' in member.name:
             return 'metric_num'
-        elif '.metric_txt.tsv' in member.name:
-            return 'metric_txt'
         elif '.params.tsv' in member.name:
             return 'params'
         return 'unknown'
 
     def import_report(self, instance, report_id):
-        # report_base = os.path.join(instance.report_dir, report_id)
+        report_base = os.path.join(instance.report_dir, report_id)
+        logging.info("[%s] Processing %s", instance.id, report_base)
 
         # first load the metadata
-        # with open(report_base + '.json', 'r') as handle:
-            # meta = json.load(handle)
+        with open(report_base + '.json', 'r') as handle:
+            meta = json.load(handle)
+            # print(meta)
+
+        # Next we'll extract files.
+        extracted_files = []
+        data_map = {}
+        with tarfile.open(report_base + '.tar.gz', 'r') as tar:
+            for member in tar:
+                guessed = self.fix_name(member)
+                if guessed == 'unknown':
+                    continue
+
+                # fancy safe name.
+                tmpname = uuid.uuid4().hex + '.tsv'
+                extracted_to = os.path.join(tempfile.gettempdir(), 'grt', tmpname)
+                logging.info("[%s] Extracting %s to %s", instance.id, member.name, extracted_to)
+                # Record where the 'params' file is or the 'metrics' file.
+                data_map[guessed] = extracted_to
+                # Change the archive member's name in order to ensure that it
+                # is extracted to somewhere with a safe name.
+                member.name = tmpname
+                # Extract into CWD.
+                tar.extract(member, TMPDIR)
+                # Track where we put it for cleanup later.
+                extracted_files.append(extracted_to)
 
         c = CopyMapping(
             Job,
-            'jobs.tsv',
+            data_map['jobs'],
             dict(external_job_id='id', tool_id='tool_id',
                  tool_version='tool_version', state='state',
                  create_time='create_time'),
@@ -53,7 +85,7 @@ class Command(BaseCommand):
 
         c = CopyMapping(
             JobParam,
-            'params.tsv',
+            data_map['params'],
             dict(external_job_id='job_id', name='name', value='value'),
             static_mapping={
                 'instance_id': instance.id,
@@ -64,7 +96,7 @@ class Command(BaseCommand):
 
         c = CopyMapping(
             MetricNumeric,
-            'metric_num.tsv',
+            data_map['metric_num'],
             dict(external_job_id='job_id',
                  plugin='plugin', name='name', value='value'),
             static_mapping={
@@ -74,20 +106,15 @@ class Command(BaseCommand):
         )
         c.save()
 
-        c = CopyMapping(
-            MetricText,
-            'metric_txt.tsv',
-            dict(external_job_id='job_id',
-                 plugin='plugin', name='name', value='value'),
-            static_mapping={
-                'instance_id': instance.id,
-            },
-            delimiter='\t'
-        )
-        c.save()
-        # instance.users_recent = meta['users']['active']
-        # instance.users_total = meta['users']['total']
-        # instance.jobs_run = meta['jobs']['ok']
-        # instance.last_import = report_id
-        # instance.save()
-        # print("Update %s" % instance)
+        for f in extracted_files:
+            try:
+                logging.info("[%s] Cleaning up %s", instance.id, f)
+                os.unlink(f)
+            except Exception as e:
+                logging.exception(e)
+
+        instance.users_recent = meta['users']['active']
+        instance.users_total = meta['users']['total']
+        instance.jobs_run = meta['jobs']['ok']
+        instance.last_import = report_id
+        instance.save()
