@@ -17,8 +17,8 @@
 		{%if request.user.is_authenticated %}
 		<a class="btn btn-primary btn-lg" role="button" href="{% url 'owned-galaxy-instance-list' %}">Manage Galaxies »</a>
 		{% else %}
-		<a class="btn btn-primary btn-lg" role="button" href="{% url 'auth_login' %}?next=/grt/">{% trans 'Log in' %} »</a>
-		<a class="btn btn-primary btn-lg" role="button" href="{% url 'registration_register' %}?next=/grt/">Register »</a>
+		<a class="btn btn-primary btn-lg" role="button" href="{% url 'auth_login' %}?next=/{{ URL_PREFIX }}">{% trans 'Log in' %} »</a>
+		<a class="btn btn-primary btn-lg" role="button" href="{% url 'registration_register' %}?next=/{{ URL_PREFIX }}">Register »</a>
 		{% endif %}
 	</div>
 </div>

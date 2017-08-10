@@ -35,9 +35,6 @@ DATABASES = {
     }
 }
 
-STATIC_URL = '/%sstatic/' % os.environ.get('DJANGO_URL_PREFIX', '')
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 if 'RAVEN_DSN' in os.environ:
     RAVEN_CONFIG = {
         'dsn': os.environ['RAVEN_DSN']

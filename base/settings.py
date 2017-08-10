@@ -15,6 +15,8 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Should end in trailing slash, e.g. `grt/`
+URL_PREFIX = os.environ.get('DJANGO_URL_PREFIX', '')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -69,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'web.context_processors.url_prefix',
             ],
         },
     },
@@ -128,19 +131,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = '/grt/static/'
+STATIC_URL = '/%sstatic/' % URL_PREFIX
 SITE_ID = 1
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 GRT_UPLOAD_DIRECTORY = os.path.join(BASE_DIR, 'uploads')
 if not os.path.exists(GRT_UPLOAD_DIRECTORY):
     os.makedirs(GRT_UPLOAD_DIRECTORY)
-
-if 'RAVEN_DSN' in os.environ:
-    RAVEN_CONFIG = {
-        'dsn': os.environ['RAVEN_DSN']
-    }
-else:
-    RAVEN_CONFIG = {}
 
 REGISTRATION_OPEN = True

@@ -23,10 +23,10 @@
 					{%if request.user.is_authenticated %}
 						<li><a href="{% url 'owned-galaxy-instance-list' %}">My Galaxies</a></li>
 						<li><a href="{% url 'galaxy-instance-create' %}">Register New Galaxy</a></li>
-						<li><a href="{% url 'auth_logout' %}?next=/grt/">{% trans 'Log out' %}</a></li>
+						<li><a href="{% url 'auth_logout' %}?next=/{{ URL_PREFIX }}">{% trans 'Log out' %}</a></li>
 					{% else %}
-						<li><a href="{% url 'registration_register' %}?next=/grt/">Register</a></li>
-						<li><a href="{% url 'auth_login' %}?next=/grt/">{% trans 'Log in' %}</a></li>
+						<li><a href="{% url 'registration_register' %}?next=/{{ URL_PREFIX }}">Register</a></li>
+						<li><a href="{% url 'auth_login' %}?next=/{{ URL_PREFIX }}">{% trans 'Log in' %}</a></li>
 					{% endif %}
 					</ul>
 				</div>
