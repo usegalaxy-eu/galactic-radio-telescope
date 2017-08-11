@@ -116,8 +116,8 @@ class Command(BaseCommand):
             except Exception as e:
                 logging.exception(e)
 
-        instance.users_recent = meta['users']['active']
-        instance.users_total = meta['users']['total']
-        instance.jobs_run = meta['jobs']['ok']
+        instance.users_recent = meta.get('users', {}).get('active', 0)
+        instance.users_total = meta.get('users', {}).get('total', 0)
+        instance.jobs_run = meta.get('jobs', {}).get('ok', 0)
         instance.last_import = report_id
         instance.save()
