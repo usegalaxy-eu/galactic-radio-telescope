@@ -76,6 +76,7 @@ class Command(BaseCommand):
             dict(external_job_id='id', tool_id='tool_id',
                  tool_version='tool_version', state='state',
                  create_time='create_time'),
+            quote_character="\b",
             static_mapping={
                 'instance_id': instance.id,
             },
@@ -87,6 +88,7 @@ class Command(BaseCommand):
             JobParam,
             data_map['params'],
             dict(external_job_id='job_id', name='name', value='value'),
+            quote_character="\b",
             static_mapping={
                 'instance_id': instance.id,
             },
@@ -99,6 +101,7 @@ class Command(BaseCommand):
             data_map['metric_num'],
             dict(external_job_id='job_id',
                  plugin='plugin', name='name', value='value'),
+            quote_character="\b",
             static_mapping={
                 'instance_id': instance.id,
             },
