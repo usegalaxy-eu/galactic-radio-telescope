@@ -30,6 +30,9 @@ class Command(BaseCommand):
             for report_id in sorted(instance.new_reports()):
                 if not self.import_report(instance, report_id):
                     break
+            # Once we've finished parsing reports for this instance, update the count.
+            instance.jobs_total = Job.objects.filter(instance_id=instance.id).count()
+            instance.save()
 
     def fix_name(self, member):
         if '.jobs.tsv' in member.name:

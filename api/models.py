@@ -23,6 +23,7 @@ class GalaxyInstance(models.Model):
     users_recent = models.IntegerField(default=0)
     users_total = models.IntegerField(default=0)
     jobs_run = models.IntegerField(default=0)
+    jobs_total = models.IntegerField(default=0)
 
     # Owner of this Galaxy instance
     owners = models.ManyToManyField(User)
