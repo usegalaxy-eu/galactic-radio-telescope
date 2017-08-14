@@ -28,7 +28,8 @@ class Command(BaseCommand):
         # report_dir = settings.GRT_UPLOAD_DIRECTORY
         for instance in GalaxyInstance.objects.all():
             for report_id in sorted(instance.new_reports()):
-                self.import_report(instance, report_id)
+                if not self.import_report(instance, report_id):
+                    break
 
     def fix_name(self, member):
         if '.jobs.tsv' in member.name:
@@ -50,7 +51,7 @@ class Command(BaseCommand):
                 validate(meta)
             except Exception as e:
                 logging.exception(e)
-                return
+                return False
 
         # Next we'll extract files.
         extracted_files = []
@@ -121,22 +122,15 @@ class Command(BaseCommand):
             except Exception as e:
                 logging.exception(e)
 
-        def coerce(val):
-            try:
-                val = int(val)
-                return val
-            except Exception as e:
-                logging.exception(e)
-
-
         if 'users' in meta:
             if 'active' in meta['users']:
-                instance.users_recent = coerce(meta['users']['active'])
+                instance.users_recent = meta['users']['active']
             if 'total' in meta['users']:
-                instance.users_total = coerce(meta['users']['total'])
+                instance.users_total = meta['users']['total']
         if 'jobs' in meta:
             if 'ok' in meta['jobs']:
-                instance.jobs_run = coerce(meta['jobs']['ok'])
+                instance.jobs_run = meta['jobs']['ok']
 
         instance.last_import = report_id
         instance.save()
+        return True
