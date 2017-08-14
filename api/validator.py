@@ -21,15 +21,15 @@ SCHEMA_V1 = {
     },
     "jobs": {
       "properties": {
-        "deleted":{"minimum": 0, "type": "integer"},
-        "deleted_new":{"minimum": 0, "type": "integer"},
-        "error":{"minimum": 0, "type": "integer"},
-        "new":{"minimum": 0, "type": "integer"},
-        "ok":{"minimum": 0, "type": "integer"},
-        "paused":{"minimum": 0, "type": "integer"},
-        "queued":{"minimum": 0, "type": "integer"},
-        "running":{"minimum": 0, "type": "integer"},
-        "waiting":{"minimum": 0, "type": "integer"}
+        "deleted": {"minimum": 0, "type": "integer"},
+        "deleted_new": {"minimum": 0, "type": "integer"},
+        "error": {"minimum": 0, "type": "integer"},
+        "new": {"minimum": 0, "type": "integer"},
+        "ok": {"minimum": 0, "type": "integer"},
+        "paused": {"minimum": 0, "type": "integer"},
+        "queued": {"minimum": 0, "type": "integer"},
+        "running": {"minimum": 0, "type": "integer"},
+        "waiting": {"minimum": 0, "type": "integer"}
       },
       "type": "object"
     },
@@ -60,7 +60,8 @@ SCHEMA_V1 = {
         "type": "array"
       },
       "minItems": 0,
-      "type": "array"
+      "type": ["array", "null"],
+      "required": false
     },
     "users": {
       "properties": {
