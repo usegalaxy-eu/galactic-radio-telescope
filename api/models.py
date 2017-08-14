@@ -9,6 +9,7 @@ import uuid as pyuuid
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 
 class GalaxyInstance(models.Model):
@@ -49,6 +50,9 @@ class GalaxyInstance(models.Model):
     def new_reports(self):
         """Get reports that have not yet been imported."""
         return [path for path in self.uploaded_reports() if float(path) > self.last_import]
+
+    def get_absolute_url(self):
+        return reverse('galaxy-instance-detail', kwargs={'slug': self.pk})
 
     def __str__(self):
         return '%s <%s>' % (self.title, self.url)
