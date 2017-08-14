@@ -60,8 +60,7 @@ SCHEMA_V1 = {
         "type": "array"
       },
       "minItems": 0,
-      "type": ["array", "null"],
-      "required": false
+      "type": ["array", "null"]
     },
     "users": {
       "properties": {
