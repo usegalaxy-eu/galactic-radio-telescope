@@ -20,19 +20,16 @@ SCHEMA_V1 = {
       "type": "string"
     },
     "jobs": {
-      "required": [
-        "error",
-        "ok"
-      ],
       "properties": {
-        "error": {
-          "minimum": 0,
-          "type": "integer"
-        },
-        "ok": {
-          "minimum": 0,
-          "type": "integer"
-        },
+        "deleted":{"minimum": 0, "type": "integer"},
+        "deleted_new":{"minimum": 0, "type": "integer"},
+        "error":{"minimum": 0, "type": "integer"},
+        "new":{"minimum": 0, "type": "integer"},
+        "ok":{"minimum": 0, "type": "integer"},
+        "paused":{"minimum": 0, "type": "integer"},
+        "queued":{"minimum": 0, "type": "integer"},
+        "running":{"minimum": 0, "type": "integer"},
+        "waiting":{"minimum": 0, "type": "integer"}
       },
       "type": "object"
     },
