@@ -116,14 +116,22 @@ class Command(BaseCommand):
             except Exception as e:
                 logging.exception(e)
 
+        def coerce(val):
+            try:
+                val = int(val)
+                return val
+            except Exception as e:
+                logging.exception(e)
+
+
         if 'users' in meta:
             if 'active' in meta['users']:
-                instance.users_recent = meta['users']['active']
+                instance.users_recent = coerce(meta['users']['active'])
             if 'total' in meta['users']:
-                instance.users_total = meta['users']['total']
+                instance.users_total = coerce(meta['users']['total'])
         if 'jobs' in meta:
             if 'ok' in meta['jobs']:
-                instance.jobs_run = meta['jobs']['ok']
+                instance.jobs_run = coerce(meta['jobs']['ok'])
 
         instance.last_import = report_id
         instance.save()
