@@ -12,31 +12,49 @@ QUERIES = [
         "name": "Top instances, all time",
         "path": os.path.join('results', 'instance'),
         "file": 'top_all.json',
+        "table": False,
         "query": """
+            CREATE TEMP TABLE top_instances AS
             SELECT
                 instance_id, count(instance_id) AS count
             FROM api_job
             GROUP BY instance_id
-            ORDER BY count desc
+            ORDER BY count DESC;
+
+            SELECT
+                api_galaxyinstance.url AS url,
+                top_instances.count AS count
+            FROM top_instances, api_galaxyinstance
+            WHERE top_instances.instance_id = api_galaxyinstance.id;
         """
     },
     {
         "name": "Top instances, last 4 weeks",
         "path": os.path.join('results', 'instance'),
         "file": 'top_recent.json',
+        "table": False,
         "query": """
+            CREATE TEMP TABLE top_recent_instances AS
             SELECT
                 instance_id, count(instance_id) AS count
             FROM api_job
             WHERE create_time >= (now() - '4 week'::interval)
             GROUP BY instance_id
-            ORDER BY count desc
+            ORDER BY count desc;
+
+            SELECT
+                top_instances.count AS count,
+                api_galaxyinstance.url AS url,
+                api_galaxyinstance.id as id
+            FROM top_instances, api_galaxyinstance
+            WHERE top_instances.instance_id = api_galaxyinstance.id;
         """
     },
     {
         "name": "Top tools, last 4 weeks",
         "path": os.path.join('results', 'tools'),
         "file": 'top_versions_recent.json',
+        "table": True,
         "query": """
             SELECT
                 tool_id, tool_version, count(*) AS count
@@ -50,6 +68,7 @@ QUERIES = [
         "name": "Top tools, all time",
         "path": os.path.join('results', 'tools'),
         "file": 'top_versions_all.json',
+        "table": True,
         "query": """
             SELECT
                 tool_id, tool_version, count(*) AS count
@@ -62,6 +81,7 @@ QUERIES = [
         "name": "Top tools, all time (no version)",
         "path": os.path.join('results', 'tools'),
         "file": 'top_all.json',
+        "table": True,
         "query": """
             SELECT
                 tool_id, count(tool_id) AS count
@@ -105,9 +125,17 @@ class Command(BaseCommand):
                 os.makedirs(query['path'])
 
             with open(os.path.join(query['path'], query['file']), 'w') as handle:
-                data = []
                 with connection.cursor() as c:
                     c.execute(query['query'])
-                    for row in c.fetchall():
-                        data.append(row)
+                    if query['table']:
+                        data = []
+                        column_names = [col[0] for col in c.description]
+                        for row in c.fetchall():
+                            data.append(dict(zip(column_names, row)))
+                    else:
+                        data = {}
+                        column_names = [col[0] for col in c.description]
+                        for row in c.fetchall():
+                            data[row[0]] = dict(zip(column_names[1:], row[1:]))
+
                 json.dump(data, handle)
