@@ -6,6 +6,7 @@ import tempfile
 import logging
 
 from api.models import GalaxyInstance, Job, JobParam, MetricNumeric, MetricText
+from api.validator import validate
 
 from django.core.management.base import BaseCommand
 # from django.conf import settings
@@ -45,7 +46,11 @@ class Command(BaseCommand):
         # first load the metadata
         with open(report_base + '.json', 'r') as handle:
             meta = json.load(handle)
-            # print(meta)
+            try:
+                validate(meta)
+            except Exception as e:
+                logging.exception(e)
+                return
 
         # Next we'll extract files.
         extracted_files = []
