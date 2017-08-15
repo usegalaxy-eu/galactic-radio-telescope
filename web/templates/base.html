@@ -20,8 +20,8 @@
 				</div>
 				<div id="navbar-main" aria-expanded="false" style="height: 1px;">
 					<ul class="nav navbar-nav navbar-right">
+					<li><a href="{% url 'galaxy-instance-list' %}">Galaxies</a></li>
 					{%if request.user.is_authenticated %}
-						<li><a href="{% url 'owned-galaxy-instance-list' %}">My Galaxies</a></li>
 						<li><a href="{% url 'galaxy-instance-create' %}">Register New Galaxy</a></li>
 						<li><a href="{% url 'auth_logout' %}?next=/{{ URL_PREFIX }}">{% trans 'Log out' %}</a></li>
 					{% else %}

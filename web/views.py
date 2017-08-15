@@ -62,13 +62,6 @@ class GalaxyInstanceListView(ListView):
     model = GalaxyInstance
 
 
-class OwnedGalaxyInstanceListView(ListView):
-    model = GalaxyInstance
-
-    def get_queryset(self):
-        return GalaxyInstance.objects.filter(owners__in=[self.request.user])
-
-
 class CustomRegistrationView(RegistrationView):
 
     def get_success_url(self, user):
