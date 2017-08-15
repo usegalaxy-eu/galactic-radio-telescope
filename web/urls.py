@@ -11,6 +11,7 @@ from .views import \
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='base/home.html'), name='home'),
+    url(r'^privacy/$', TemplateView.as_view(template_name='base/privacy.html'), name='privacy'),
     url(r'^admin/', include(admin.site.urls), name='admin'),
     url(r'^accounts/', include([
         url(r'^register/$',
