@@ -43,9 +43,8 @@ QUERIES = [
             ORDER BY count desc;
 
             SELECT
-                top_instances.count AS count,
                 api_galaxyinstance.url AS url,
-                api_galaxyinstance.id as id
+                top_instances.count AS count
             FROM top_instances, api_galaxyinstance
             WHERE top_instances.instance_id = api_galaxyinstance.id;
         """
