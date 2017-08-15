@@ -1,10 +1,67 @@
 import json
 import os
 
-from api.models import GalaxyInstance, Job, JobParam, MetricNumeric, MetricText
-
 from django.core.management.base import BaseCommand
-from django.db import transaction, connection
+from django.db import connection
+
+RECENT = """WHERE create_time >= (now() - '4 week'::interval)"""
+
+
+def top_exec_versions_recent(c):
+    return top_exec_versions_all(c, time_filter=RECENT)
+
+
+def top_exec_versions_all(c, time_filter=""):
+    c.execute(
+        """
+            SELECT
+                tool_id, tool_version, count(*) AS count
+            FROM api_job
+            {time_filter}
+            GROUP BY tool_id, tool_version
+            ORDER BY count desc
+        """.format(time_filter=time_filter)
+    )
+    data = {}
+    for row in c.fetchall():
+        if row[0] not in data:
+            data[row[0]] = {}
+
+        data[row[0]][row[1]] = row[2]
+
+    for key in data.keys():
+        val = sum((data[key][k] for k in data[key].keys()))
+        data[key]['_sum'] = val
+    return data
+
+
+def top_inst_versions_recent(c):
+    return top_inst_versions_all(c, time_filter=RECENT)
+
+
+def top_inst_versions_all(c, time_filter=""):
+    c.execute(
+        """
+        SELECT tool_id,
+               count(tool_id) AS count
+
+            FROM (
+                SELECT tool_id
+                FROM api_job
+                {time_filter}
+                GROUP BY tool_id, instance_id
+                ORDER by tool_id
+            )
+        AS tmp group by tool_id;
+        """.format(time_filter=time_filter)
+    )
+    data = {}
+    for row in c.fetchall():
+        if row[0] not in data:
+            data[row[0]] = {}
+
+        data[row[0]] = row[1]
+    return data
 
 
 QUERIES = [
@@ -50,37 +107,10 @@ QUERIES = [
         """
     },
     {
-        "name": "Top tools, last 4 weeks",
-        "path": os.path.join('results', 'tools'),
-        "file": 'top_versions_recent.json',
-        "table": True,
-        "query": """
-            SELECT
-                tool_id, tool_version, count(*) AS count
-            FROM api_job
-            WHERE create_time >= (now() - '4 week'::interval)
-            GROUP BY tooL_id, tool_version
-            ORDER BY count desc
-        """
-    },
-    {
-        "name": "Top tools, all time",
-        "path": os.path.join('results', 'tools'),
-        "file": 'top_versions_all.json',
-        "table": True,
-        "query": """
-            SELECT
-                tool_id, tool_version, count(*) AS count
-            FROM api_job
-            GROUP BY tool_id, tool_version
-            ORDER BY count desc
-        """
-    },
-    {
         "name": "Top tools, all time (no version)",
         "path": os.path.join('results', 'tools'),
         "file": 'top_all.json',
-        "table": True,
+        "table": False,
         "query": """
             SELECT
                 tool_id, count(tool_id) AS count
@@ -89,31 +119,43 @@ QUERIES = [
             ORDER BY count desc
         """
     },
-    # {
-        # "name": "Top tools, all time (no version)",
-        # "path": os.path.join('results', 'tools'),
-        # "file": 'top_all.json',
-        # "query": """
-
-            # CREATE TEMP TABLE popcon AS
-            # SELECT external_job_id, instance_id, count(external_job_id) AS count
-            # FROM api_jobparam
-            # GROUP BY external_job_id, instance_id
-            # ORDER BY count desc;
-
-            # SELECT  popcon.instance_id ,
-                    # popcon.external_job_id ,
-                    # popcon.count ,
-                    # api_job.tool_id
-            # FROM    popcon ,
-                    # api_job
-            # WHERE   popcon.external_job_id = api_job.external_job_id
-                    # AND popcon.instance_id = api_job.instance_id
-            # ORDER BY count DESC ,
-                    # api_job.tool_id DESC;
-        # """
-    # }
 ]
+
+COMPLEX_QUERIES = [
+    {
+        "name": "Top executed tools, last 4 weeks",
+        "path": os.path.join('results', 'tools'),
+        "file": 'top_exec_versions_recent.json',
+        "query": top_exec_versions_recent
+    },
+    {
+        "name": "Top executed tools, all time",
+        "path": os.path.join('results', 'tools'),
+        "file": 'top_exec_versions_all.json',
+        "query": top_exec_versions_all
+    },
+    {
+        "name": "Top installed tools, last 4 weeks",
+        "path": os.path.join('results', 'tools'),
+        "file": 'top_inst_versions_recent.json',
+        "query": top_inst_versions_recent
+    },
+    {
+        "name": "Top installed tools, all time",
+        "path": os.path.join('results', 'tools'),
+        "file": 'top_inst_versions_all.json',
+        "query": top_inst_versions_all
+    }
+]
+
+
+def write_file(query, data, name=None):
+    fn = query['file']
+    if name:
+        fn = fn.replace('.json', '_' + name + '.json')
+    with open(os.path.join(query['path'], fn), 'w') as handle:
+        json.dump(data, handle)
+
 
 class Command(BaseCommand):
 
@@ -123,18 +165,33 @@ class Command(BaseCommand):
             if not os.path.exists(query['path']):
                 os.makedirs(query['path'])
 
-            with open(os.path.join(query['path'], query['file']), 'w') as handle:
-                with connection.cursor() as c:
-                    c.execute(query['query'])
-                    if query['table']:
-                        data = []
-                        column_names = [col[0] for col in c.description]
-                        for row in c.fetchall():
-                            data.append(dict(zip(column_names, row)))
-                    else:
-                        data = {}
-                        column_names = [col[0] for col in c.description]
-                        for row in c.fetchall():
-                            data[row[0]] = dict(zip(column_names[1:], row[1:]))
+            with connection.cursor() as c:
+                c.execute(query['query'])
+                if query['table']:
+                    data = []
+                    column_names = [col[0] for col in c.description]
+                    for idx, row in enumerate(c.fetchall()):
+                        data.append(dict(zip(column_names, row)))
+                    write_file(query, data)
 
-                json.dump(data, handle)
+                else:
+                    data = {}
+                    column_names = [col[0] for col in c.description]
+                    if len(column_names) == 2:
+                        for row in c.fetchall():
+                            data[row[0]] = row[1]
+                    else:
+                        for row in c.fetchall():
+                            data[row[0]] = dict(zip(
+                                column_names[1:], row[1:]))
+                    write_file(query, data)
+
+        for query in COMPLEX_QUERIES:
+            print("Processing %s" % query['name'])
+            if not os.path.exists(query['path']):
+                os.makedirs(query['path'])
+
+            with connection.cursor() as c:
+                data = query['query'](c)
+                column_names = [col[0] for col in c.description]
+                write_file(query, data)
