@@ -62,12 +62,13 @@ class Job(models.Model):
     """
     A single galaxy job
     """
+    id = models.BigAutoField(primary_key=True)
     # Galaxy Instance
     instance = models.ForeignKey(GalaxyInstance)
 
     # We store the job ID from their database in order to ensure that we do not
     # create duplicate records.
-    external_job_id = models.IntegerField(default=-1)
+    external_job_id = models.BigIntegerField()
     # Other attributes
     tool_id = models.CharField(max_length=255)
     tool_version = models.TextField()
@@ -86,8 +87,9 @@ class JobParam(models.Model):
     (some_param, 10), for repeats and other more complex ones, this comes as a
     giant JSON struct.
     """
+    id = models.BigAutoField(primary_key=True)
     instance = models.ForeignKey(GalaxyInstance)
-    external_job_id = models.IntegerField(default=-1)
+    external_job_id = models.BigIntegerField()
     name = models.CharField(max_length=256)
     value = models.TextField()
 
@@ -96,8 +98,9 @@ class MetricNumeric(models.Model):
     """
     Tuple of (name, type, value).
     """
+    id = models.BigAutoField(primary_key=True)
     instance = models.ForeignKey(GalaxyInstance)
-    external_job_id = models.IntegerField(default=-1)
+    external_job_id = models.BigIntegerField()
     plugin = models.CharField(max_length=256)
     name = models.CharField(max_length=256)
     value = models.DecimalField(max_digits=22, decimal_places=7)
@@ -107,8 +110,9 @@ class MetricText(models.Model):
     """
     Tuple of (name, type, value).
     """
+    id = models.BigAutoField(primary_key=True)
     instance = models.ForeignKey(GalaxyInstance)
-    external_job_id = models.IntegerField(default=-1)
+    external_job_id = models.BigIntegerField()
     plugin = models.CharField(max_length=256)
     name = models.CharField(max_length=256)
     value = models.CharField(max_length=256)
