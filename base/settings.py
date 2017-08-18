@@ -141,3 +141,7 @@ if not os.path.exists(GRT_UPLOAD_DIRECTORY):
     os.makedirs(GRT_UPLOAD_DIRECTORY)
 
 REGISTRATION_OPEN = True
+
+GRT_VERSION = 2
+
+RAVEN_CONFIG = {}
