@@ -7,4 +7,5 @@ django-postgres-copy==0.2.2
 django-registration==2.2
 djangorestframework==3.6.3
 jsonschema==2.6.0
+numpy==1.13.1
 psycopg2==2.7.3
