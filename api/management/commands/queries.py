@@ -116,7 +116,9 @@ def runtimes(c):
             if len(points) == 0:
                 continue
 
-            print(tool_id, tool_version, points)
+            # Remove any slashes.
+            tool_id = tool_id.replace('/', '_')
+
             # Aggregate/histogram of points.
             (hist, bin_edges) = numpy.histogram(points)
             data = list(zip(
