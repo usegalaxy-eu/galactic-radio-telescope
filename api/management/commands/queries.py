@@ -213,7 +213,7 @@ COMPLEX_QUERIES = [
     {
         "name": "Tool runtimes (per-instance)",
         "path": os.path.join('results', 'tools', 'runtimes', '{instance}'),
-        "file": '{tool_id}--{tool_version}.json',
+        "file": '{tool_id}.json',
         "per_instance_tool": True,
         "query": runtimes
     },
