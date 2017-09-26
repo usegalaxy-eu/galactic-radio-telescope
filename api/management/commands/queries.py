@@ -1,5 +1,6 @@
 import json
 import os
+import numpy
 
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -66,27 +67,34 @@ def top_inst_versions_all(c, time_filter=""):
 
 def runtimes(c):
     # First we collect a list of tools.
+    print(' locating tools')
     c.execute("""
-        SELECT DISTINCT(
+        SELECT
             api_job.tool_id,
             api_job.tool_version
-        ) FROM api_job
+        FROM api_job
+        GROUP BY
+            api_job.tool_id,
+            api_job.tool_version
+        ORDER BY
+            api_job.tool_id asc,
+            api_job.tool_version asc
     """)
     tools = []
     for row in c.fetchall():
         tools.append((row[0], row[1]))
 
+    print(' locating instances')
     # Next we collect a list of instances.
     c.execute("""
         SELECT id FROM api_galaxyinstance;
     """)
-    instances = list(c.fetchall())
-.
+    instances = list([x[0] for x in c.fetchall()])
 
+    print(' mxn')
     # Last, we iterate over them.
     for instance in instances:
         for (tool_id, tool_version) in tools:
-            print(instance, tool_id, tool_version)
             c.execute("""
                 SELECT
                     api_metricnumeric.value
@@ -96,23 +104,25 @@ def runtimes(c):
                     api_metricnumeric.external_job_id = api_job.external_job_id AND
                     api_job.tool_id = %s AND
                     api_job.tool_version = %s AND
+                    api_job.state = 'ok' AND
                     api_metricnumeric.name = 'runtime_seconds' AND
                     api_job.instance_id = %s
                 ;
-            """, tool_id, tool_version, instance)
+            """, (tool_id, tool_version, instance))
             points = []
             for row in c.fetchall():
                 points.append(int(row[0]))
 
+            if len(points) == 0:
+                continue
+
+            print(tool_id, tool_version, points)
             # Aggregate/histogram of points.
-            (hist, bin_edges) = np.histogram(points)
-            data = {
-                k: v for (k, v) in
-                zip(
-                    map(int, bin_edges)
-                    map(int, hist)
-                )
-            }
+            (hist, bin_edges) = numpy.histogram(points)
+            data = list(zip(
+                map(int, bin_edges),
+                map(int, hist)
+            ))
             yield (instance, tool_id, tool_version, data)
 
 
@@ -211,10 +221,10 @@ COMPLEX_QUERIES = [
 class Command(BaseCommand):
 
     def write_file(self, query, data, name=None):
-        fn = query['file']
+        fn = os.path.join(query['path'], query['file'])
         if name:
-            fn = fn.replace('.json', '_' + name + '.json')
-        with open(os.path.join(query['path'], fn), 'w') as handle:
+            fn = name
+        with open(fn, 'w') as handle:
             json.dump(data, handle)
 
     def _tabular_data(self, query):
@@ -252,10 +262,11 @@ class Command(BaseCommand):
     def _complex_complex_query(self, query):
         with connection.cursor() as c:
             for (instance, tool_id, tool_version, data) in query['query'](c):
-                kwargs = {'instance': instance, 'tool_id': tool, 'tool_version': tool_version}
-                if not os.path.exists(query['path'].format(**kwargs)):
-                    os.makedirs(query['path'])
-                self.write_file(query, data)
+                kwargs = {'instance': instance, 'tool_id': tool_id, 'tool_version': tool_version}
+                dirname = query['path'].format(**kwargs)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                self.write_file(query, data, name=os.path.join(dirname, query['file'].format(**kwargs)))
 
     def handle(self, *args, **options):
         for query in QUERIES:
@@ -270,7 +281,7 @@ class Command(BaseCommand):
 
         for query in COMPLEX_QUERIES:
             print("Processing %s" % query['name'])
-            if query['per_instance_tool']:
+            if 'per_instance_tool' in query:
                 self._complex_complex_query(query)
             else:
                 self._simple_complex_query(query)
