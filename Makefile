@@ -3,10 +3,10 @@ all:
 	python manage.py runserver
 
 launch_pg:
-	sudo docker run -it -p 5432:5432 -v `pwd`/.pgdata:/var/lib/postgres/data -d postgres:9.5
+	docker-compose up -d db
 
 kill_pg:
-	sudo docker ps | grep postgres | awk '{print $$1}' | xargs sudo docker kill
+	docker-compose kill db
 
 refresh_pg:
 	$(MAKE) kill_pg

@@ -27,7 +27,7 @@ SECRET_KEY = '^3zfy7ab!+x6(@4$i+omly)93ryvw$%-05e!4!!*(e%zx))3hf'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -143,5 +143,5 @@ if not os.path.exists(GRT_UPLOAD_DIRECTORY):
 REGISTRATION_OPEN = True
 USE_X_FORWARDED_HOST = True
 GRT_VERSION = 3
-
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 RAVEN_CONFIG = {}
