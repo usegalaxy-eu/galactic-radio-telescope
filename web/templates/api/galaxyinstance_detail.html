@@ -10,6 +10,9 @@
         <a href="{% url 'galaxy-instance-edit' object.id %}">
             {% fontawesome_icon 'pencil' %}
         </a>
+        <a href="{% url 'galaxy-instance-create-success' object.id %}">
+            {% fontawesome_icon 'file' %}
+        </a>
         {% endif %}
     </h1>
 

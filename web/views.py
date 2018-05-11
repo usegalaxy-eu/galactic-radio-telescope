@@ -27,6 +27,12 @@ class GalaxyInstanceView(DetailView):
         return context
 
 
+class GalaxyInstanceConfig(DetailView):
+    model = GalaxyInstance
+    slug_field = 'id'
+    template_name_suffix = '.yml'
+
+
 class GalaxyInstanceCreateSuccess(DetailView):
     model = GalaxyInstance
     slug_field = 'id'

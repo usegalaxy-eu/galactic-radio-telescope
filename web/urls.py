@@ -7,6 +7,7 @@ from .views import \
     GalaxyInstanceCreate, \
     GalaxyInstanceCreateSuccess, \
     GalaxyInstanceListView, \
+    GalaxyInstanceConfig, \
     CustomRegistrationView
 
 urlpatterns = [
@@ -24,5 +25,6 @@ urlpatterns = [
 
     url(r'^galaxy/(?P<slug>[0-9]+)/$', GalaxyInstanceView.as_view(), name='galaxy-instance-detail'),
     url(r'^galaxy/(?P<slug>[0-9]+)/edit$', GalaxyInstanceEdit.as_view(), name='galaxy-instance-edit'),
+    url(r'^galaxy/(?P<slug>[0-9]+)/grt.yml$', GalaxyInstanceConfig.as_view(), name='galaxy-instance-config'),
     url(r'^galaxy/(?P<slug>[0-9]+)/success$', GalaxyInstanceCreateSuccess.as_view(), name='galaxy-instance-create-success'),
 ]
