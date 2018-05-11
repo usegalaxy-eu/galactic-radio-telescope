@@ -3,6 +3,8 @@ import re
 import os
 import subprocess
 
+from django.core.urlresolvers import reverse
+from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from api.models import GalaxyInstance
@@ -62,6 +64,22 @@ def whoami(request):
             'galaxy': galaxy.title,
             'uploaded_reports': galaxy.uploaded_reports()
         }),
+        status=200
+    )
+
+
+@csrf_exempt
+def getconf(request):
+    galaxy = authenticate(request)
+    if not isinstance(galaxy, GalaxyInstance):
+        return galaxy
+
+    url = "{}://{}{}".format(request.scheme, request.get_host(), reverse('home'))
+    rendered = render_to_string('api/galaxyinstance.yml.html', {'object': galaxy, 'auth_bypass': True, 'url': url})
+
+
+    return HttpResponse(
+        content=rendered,
         status=200
     )
 

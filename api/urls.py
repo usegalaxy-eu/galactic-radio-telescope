@@ -8,6 +8,7 @@ router.register(r'galaxies', viewsets.GalaxyInstanceViewSet, 'Galaxy')
 
 urlpatterns = [
     url('api/', include(router.urls, namespace="api")),
+    url('api/conf.yml', views.getconf),
     url('api/whoami', views.whoami),
     url('api/v2/upload', views.v2_upload_data),
 ]

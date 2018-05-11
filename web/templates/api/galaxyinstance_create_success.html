@@ -13,8 +13,11 @@
     <h2>Step 1</h2>
     <p>
         Download your configuration file to
-        <code>$GALAXY/scripts/grt.yml</code>
-<pre style="color: black">
+<pre>curl -X POST -H 'Authorization: 1:9b9ccd0b-f224-4050-abf8-42b9ac5a2481' \
+    localhost:8000/grt/api/conf.yml > $GALAXY/scripts/grt.yml
+</pre>
+        Or copy and paste the below configuration:
+<pre style="color: black; max-height: 10em">
 {% include "api/grt.yml" %}
 </pre>
     </p>
@@ -25,7 +28,7 @@
         <code>/etc/cron.weekly</code>, and <code>chmod +x</code>ing it.
 <pre style="color: black">
 #!/bin/bash
-cd $GALAXY &amp;&amp; python scripts/grt.py
+cd $GALAXY &amp;&amp; python scripts/grt/export.py
 </pre>
     You can run the script at any time and it will generate a directory of
     reports. These are not immediately uploaded to the Galactic Radio
@@ -33,7 +36,7 @@ cd $GALAXY &amp;&amp; python scripts/grt.py
 
 <pre style="color: black">
 #!/bin/bash
-cd $GALAXY/ &amp;&amp; python scripts/grt-submit.py
+cd $GALAXY/ &amp;&amp; python scripts/grt/upload.py
 </pre>
 
     </p>
