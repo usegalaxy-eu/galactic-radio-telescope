@@ -9,7 +9,7 @@ grt:
     # Galaxy Project offers a public galactic-radio-telescope instance, however
     # you are free to run your own if you need. We would love it if you were
     # willing and able to contribute your data publicly.
-    url: {{ url }}
+    url: https://telescope.galaxyproject.org
     # Are you willing to share your toolbox? I.e. what tools are installed.
     # If your instance is public, this can help us direct users to your
     # instance. If you elect to not send your entire toolbox, we will still
