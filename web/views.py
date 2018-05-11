@@ -24,7 +24,7 @@ class GalaxyInstanceView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(GalaxyInstanceView, self).get_context_data(**kwargs)
-        context['url'] = "{}://{}{}".format(request.scheme, request.get_host(), reverse_lazy('home'))
+        context['url'] = "{}://{}{}".format(self.request.scheme, self.request.get_host(), reverse_lazy('home'))
         return context
 
 
