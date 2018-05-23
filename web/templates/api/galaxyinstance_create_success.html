@@ -13,8 +13,8 @@
     <h2>Step 1</h2>
     <p>
         Download your configuration file to
-<pre>curl -X POST -H 'Authorization: 1:9b9ccd0b-f224-4050-abf8-42b9ac5a2481' \
-    https://telescope.galaxyproject.org/api/conf.yml > $GALAXY/scripts/grt.yml
+<pre>curl -X POST -H 'Authorization: {{ object.id }}:{% if request.user in object.owners.all or auth_bypass %}{{ object.api_key }}{% endif %}' \
+    https://telescope.galaxyproject.org/grt-admin/api/conf.yml > $GALAXY/scripts/grt/grt.yml
 </pre>
         Or copy and paste the below configuration:
 <pre style="color: black; max-height: 10em">

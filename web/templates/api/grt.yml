@@ -4,7 +4,7 @@ galaxy_config: config/galaxy.ini
 
 grt:
     # Go to https://telescope.galaxyproject.org to obtain an Instance ID and API key
-    instance_id: {{ object.id }}
+    instance_id: "{{ object.id }}"
     api_key: "{% if request.user in object.owners.all or auth_bypass %}{{ object.api_key }}{% endif %}"
     # Galaxy Project offers a public galactic-radio-telescope instance, however
     # you are free to run your own if you need. We would love it if you were
