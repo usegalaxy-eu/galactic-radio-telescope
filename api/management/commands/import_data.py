@@ -5,7 +5,7 @@ import uuid
 import tempfile
 import logging
 
-from api.models import GalaxyInstance, Job, JobParam, MetricNumeric, MetricText
+from api.models import GalaxyInstance, Job, JobParam, MetricNumeric, MetricText, Dataset
 from api.validator import validate
 
 from django.core.management.base import BaseCommand
@@ -41,6 +41,8 @@ class Command(BaseCommand):
             return 'metric_num'
         elif '.params.tsv' in member.name:
             return 'params'
+        elif '.datasets.tsv' in member.name:
+            return 'datasets'
         return 'unknown'
 
     def import_report(self, instance, report_id):
@@ -110,6 +112,25 @@ class Command(BaseCommand):
             data_map['metric_num'],
             dict(external_job_id='job_id',
                  plugin='plugin', name='name', value='value'),
+            quote_character="\b",
+            static_mapping={
+                'instance_id': instance.id,
+            },
+            delimiter='\t'
+        )
+        c.save()
+
+        c = CopyMapping(
+            Dataset,
+            data_map['datasets'],
+            dict(
+                external_job_id='job_id',
+                external_dataset_id='dataset_id',
+                extension='extension',
+                file_size='file_size',
+                param_name='param_name',
+                file_type='file_type',
+            ),
             quote_character="\b",
             static_mapping={
                 'instance_id': instance.id,

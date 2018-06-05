@@ -116,3 +116,18 @@ class MetricText(models.Model):
     plugin = models.CharField(max_length=256)
     name = models.CharField(max_length=256)
     value = models.CharField(max_length=256)
+
+
+class Dataset(models.Model):
+    """
+    Tuple of ('job_id', 'dataset_id', 'extension', 'file_size', 'param_name', 'type').
+    """
+    id = models.BigAutoField(primary_key=True)
+    instance = models.ForeignKey(GalaxyInstance)
+
+    external_job_id = models.BigIntegerField()
+    external_dataset_id = models.BigIntegerField()
+    extension = models.CharField(max_length=32)
+    file_size = models.BigIntegerField()
+    param_name = models.CharField(max_length=256)
+    file_type = models.CharField(max_length=16)
