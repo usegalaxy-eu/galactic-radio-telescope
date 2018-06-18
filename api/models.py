@@ -90,7 +90,7 @@ class JobParam(models.Model):
     id = models.BigAutoField(primary_key=True)
     instance = models.ForeignKey(GalaxyInstance)
     external_job_id = models.BigIntegerField()
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, null=True)
     value = models.TextField()
 
 
