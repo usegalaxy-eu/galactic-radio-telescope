@@ -137,4 +137,5 @@ class Dataset(models.Model):
             CASE
                 WHEN "%(name)s" = 'None' THEN NULL
                 ELSE "%(name)s"::bigint
+            END
         """
