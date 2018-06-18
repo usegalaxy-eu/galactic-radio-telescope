@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 # fancy safe name.
                 tmpname = uuid.uuid4().hex + '.tsv'
                 extracted_to = os.path.join(tempfile.gettempdir(), 'grt', tmpname)
-                logging.info("[%s] Extracting %s to %s", instance.id, member.name, extracted_to)
+                logging.info("[%s] Extracting %s to %s, guessed:%s", instance.id, member.name, extracted_to, guessed)
                 # Record where the 'params' file is or the 'metrics' file.
                 data_map[guessed] = extracted_to
                 # Change the archive member's name in order to ensure that it
@@ -81,63 +81,67 @@ class Command(BaseCommand):
                 # Track where we put it for cleanup later.
                 extracted_files.append(extracted_to)
 
-        c = CopyMapping(
-            Job,
-            data_map['jobs'],
-            dict(external_job_id='id', tool_id='tool_id',
-                 tool_version='tool_version', state='state',
-                 create_time='create_time'),
-            quote_character="\b",
-            static_mapping={
-                'instance_id': instance.id,
-            },
-            delimiter='\t'
-        )
-        c.save()
+        if 'jobs' in data_map:
+            c = CopyMapping(
+                Job,
+                data_map['jobs'],
+                dict(external_job_id='id', tool_id='tool_id',
+                    tool_version='tool_version', state='state',
+                    create_time='create_time'),
+                quote_character="\b",
+                static_mapping={
+                    'instance_id': instance.id,
+                },
+                delimiter='\t'
+            )
+            c.save()
 
-        c = CopyMapping(
-            JobParam,
-            data_map['params'],
-            dict(external_job_id='job_id', name='name', value='value'),
-            quote_character="\b",
-            static_mapping={
-                'instance_id': instance.id,
-            },
-            delimiter='\t'
-        )
-        c.save()
+        if 'params' in data_map:
+            c = CopyMapping(
+                JobParam,
+                data_map['params'],
+                dict(external_job_id='job_id', name='name', value='value'),
+                quote_character="\b",
+                static_mapping={
+                    'instance_id': instance.id,
+                },
+                delimiter='\t'
+            )
+            c.save()
 
-        c = CopyMapping(
-            MetricNumeric,
-            data_map['metric_num'],
-            dict(external_job_id='job_id',
-                 plugin='plugin', name='name', value='value'),
-            quote_character="\b",
-            static_mapping={
-                'instance_id': instance.id,
-            },
-            delimiter='\t'
-        )
-        c.save()
+        if 'metric_num' in data_map:
+            c = CopyMapping(
+                MetricNumeric,
+                data_map['metric_num'],
+                dict(external_job_id='job_id',
+                    plugin='plugin', name='name', value='value'),
+                quote_character="\b",
+                static_mapping={
+                    'instance_id': instance.id,
+                },
+                delimiter='\t'
+            )
+            c.save()
 
-        c = CopyMapping(
-            Dataset,
-            data_map['datasets'],
-            dict(
-                external_job_id='job_id',
-                external_dataset_id='dataset_id',
-                extension='extension',
-                file_size='file_size',
-                param_name='param_name',
-                file_type='type',
-            ),
-            quote_character="\b",
-            static_mapping={
-                'instance_id': instance.id,
-            },
-            delimiter='\t'
-        )
-        c.save()
+        if 'datasets' in data_map:
+            c = CopyMapping(
+                Dataset,
+                data_map['datasets'],
+                dict(
+                    external_job_id='job_id',
+                    external_dataset_id='dataset_id',
+                    extension='extension',
+                    file_size='file_size',
+                    param_name='param_name',
+                    file_type='type',
+                ),
+                quote_character="\b",
+                static_mapping={
+                    'instance_id': instance.id,
+                },
+                delimiter='\t'
+            )
+            c.save()
 
         for f in extracted_files:
             try:
