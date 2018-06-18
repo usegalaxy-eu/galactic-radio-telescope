@@ -103,7 +103,7 @@ class MetricNumeric(models.Model):
     external_job_id = models.BigIntegerField()
     plugin = models.CharField(max_length=256)
     name = models.CharField(max_length=256)
-    value = models.DecimalField(max_digits=22, decimal_places=7)
+    value = models.DecimalField(max_digits=26, decimal_places=7)
 
 
 class MetricText(models.Model):
