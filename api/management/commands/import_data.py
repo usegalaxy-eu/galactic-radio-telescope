@@ -129,7 +129,7 @@ class Command(BaseCommand):
                 extension='extension',
                 file_size='file_size',
                 param_name='param_name',
-                file_type='file_type',
+                file_type='type',
             ),
             quote_character="\b",
             static_mapping={
