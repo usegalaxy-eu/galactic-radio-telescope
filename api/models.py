@@ -128,6 +128,13 @@ class Dataset(models.Model):
     external_job_id = models.BigIntegerField()
     external_dataset_id = models.BigIntegerField()
     extension = models.CharField(max_length=32, null=True)
-    file_size = models.BigIntegerField()
+    file_size = models.BigIntegerField(null=True)
     param_name = models.CharField(max_length=256, null=True)
     file_type = models.CharField(max_length=16)
+
+    def copy_file_size_template(self):
+        return """
+            CASE
+                WHEN "%(name)s" = 'None' THEN NULL
+                ELSE "%(name)s"::bigint
+        """
