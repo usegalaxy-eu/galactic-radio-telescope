@@ -70,9 +70,9 @@ class Job(models.Model):
     # create duplicate records.
     external_job_id = models.BigIntegerField()
     # Other attributes
-    tool_id = models.CharField(max_length=255)
-    tool_version = models.TextField()
-    state = models.CharField(max_length=16)
+    tool_id = models.CharField(max_length=255, null=True)
+    tool_version = models.TextField(null=True)
+    state = models.CharField(max_length=16, null=True)
     create_time = models.DateTimeField(null=True, blank=True)
 
     # Ensure that the combination of instance + external_job_id is unique. We
@@ -91,7 +91,7 @@ class JobParam(models.Model):
     instance = models.ForeignKey(GalaxyInstance)
     external_job_id = models.BigIntegerField()
     name = models.CharField(max_length=256, null=True)
-    value = models.TextField()
+    value = models.TextField(null=True)
 
 
 class MetricNumeric(models.Model):
@@ -101,8 +101,8 @@ class MetricNumeric(models.Model):
     id = models.BigAutoField(primary_key=True)
     instance = models.ForeignKey(GalaxyInstance)
     external_job_id = models.BigIntegerField()
-    plugin = models.CharField(max_length=256)
-    name = models.CharField(max_length=256)
+    plugin = models.CharField(max_length=256, null=True)
+    name = models.CharField(max_length=256, null=True)
     value = models.DecimalField(max_digits=26, decimal_places=7)
 
 
@@ -113,9 +113,9 @@ class MetricText(models.Model):
     id = models.BigAutoField(primary_key=True)
     instance = models.ForeignKey(GalaxyInstance)
     external_job_id = models.BigIntegerField()
-    plugin = models.CharField(max_length=256)
-    name = models.CharField(max_length=256)
-    value = models.CharField(max_length=256)
+    plugin = models.CharField(max_length=256, null=True)
+    name = models.CharField(max_length=256, null=True)
+    value = models.CharField(max_length=256, null=True)
 
 
 class Dataset(models.Model):
@@ -127,7 +127,7 @@ class Dataset(models.Model):
 
     external_job_id = models.BigIntegerField()
     external_dataset_id = models.BigIntegerField()
-    extension = models.CharField(max_length=32)
+    extension = models.CharField(max_length=32, null=True)
     file_size = models.BigIntegerField()
-    param_name = models.CharField(max_length=256)
+    param_name = models.CharField(max_length=256, null=True)
     file_type = models.CharField(max_length=16)
