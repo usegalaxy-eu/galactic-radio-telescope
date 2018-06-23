@@ -10,7 +10,7 @@ from api.validator import validate
 
 from django.core.management.base import BaseCommand
 # from django.conf import settings
-# from django.db import transaction
+from django.db import transaction
 # from django.contrib.auth.models import User
 from postgres_copy import CopyMapping
 
@@ -27,12 +27,17 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # report_dir = settings.GRT_UPLOAD_DIRECTORY
         for instance in GalaxyInstance.objects.all():
-            for report_id in sorted(instance.new_reports()):
-                if not self.import_report(instance, report_id):
-                    break
-            # Once we've finished parsing reports for this instance, update the count.
-            instance.jobs_total = Job.objects.filter(instance_id=instance.id).count()
-            instance.save()
+            try:
+                with transaction.atomic():
+                    for report_id in sorted(instance.new_reports()):
+                        if not self.import_report(instance, report_id):
+                            raise Exception("Import error")
+                    # Once we've finished parsing reports for this instance, update the count.
+                    instance.jobs_total = Job.objects.filter(instance_id=instance.id).count()
+                    instance.save()
+            except Exception as e:
+                pass
+
 
     def fix_name(self, member):
         if '.jobs.tsv' in member.name:
