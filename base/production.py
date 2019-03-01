@@ -23,7 +23,7 @@ with open('/tmp/django_secret', 'r') as handle:
 DEBUG = os.environ.get('DJANGO_DEBUG', None) == 'True'
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 CORS_ORIGIN_WHITELIST = os.environ.get('DJANGO_CORS_ORIGINS', '').split(',')
-
+GRT_UPLOAD_DIRECTORY = os.environ.get('GRT_UPLOAD_DIR', '/tmp/grt-uploads')
 
 # Application definition
 
