@@ -6,7 +6,7 @@ import string
 
 import raven
 
-INSTALLED_APPS += [
+INSTALLED_APPS += [  # noqa
     'raven.contrib.django.raven_compat',
 ]
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -30,11 +30,11 @@ CORS_ORIGIN_WHITELIST = os.environ.get('DJANGO_CORS_ORIGINS', '').split(',')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': '5432',
+        'NAME': os.environ.get('PGNAME', ''),
+        'USER': os.environ.get('PGUSER', ''),
+        'PASSWORD': os.environ.get('PGPASSWORD', ''),
+        'HOST': os.environ.get('PGHOST', 'localhost'),
+        'PORT': os.environ.get('PGPORT', ''),
     }
 }
 
