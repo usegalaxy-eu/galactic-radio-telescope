@@ -1,4 +1,7 @@
+import sys
+import json
 from jsonschema import validate as json_validate
+
 
 SCHEMA_V1 = {
   "required": [
@@ -81,6 +84,76 @@ SCHEMA_V1 = {
   }
 }
 
+SCHEMA_V3 = {
+  "required": [
+    "galaxy_version",
+    "generated",
+    "jobs",
+    "metrics",
+    "report_hash",
+    "users",
+    "version"
+  ],
+  "type": "object",
+  "properties": {
+    "galaxy_version": {
+      "type": "string"
+    },
+    "generated": {
+      "type": "string"
+    },
+    "jobs": {
+      "properties": {
+        "deleted": {"minimum": 0, "type": "integer"},
+        "deleted_new": {"minimum": 0, "type": "integer"},
+        "error": {"minimum": 0, "type": "integer"},
+        "new": {"minimum": 0, "type": "integer"},
+        "ok": {"minimum": 0, "type": "integer"},
+        "paused": {"minimum": 0, "type": "integer"},
+        "queued": {"minimum": 0, "type": "integer"},
+        "running": {"minimum": 0, "type": "integer"},
+        "waiting": {"minimum": 0, "type": "integer"}
+      },
+      "type": "object"
+    },
+    "metrics": {
+      "required": [
+        "_times"
+      ],
+      "properties": {
+        "_times": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+      },
+      "type": "object"
+    },
+    "report_hash": {
+      "type": "string"
+    },
+    "users": {
+      "properties": {
+        "active": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "vesion": {
+      "type": "integer"
+    }
+  }
+}
 
 def validate(data):
     if 'version' not in data:
@@ -88,5 +161,12 @@ def validate(data):
 
     if data['version'] == 1:
         return json_validate(data, SCHEMA_V1)
+    elif data['version'] == 3:
+        return json_validate(data, SCHEMA_V3)
 
     raise Exception("Unknown schema version: %s" % data['version'])
+
+
+if __name__ == '__main__':
+    with open(sys.argv[1], 'r') as handle:
+        validate(json.load(handle))
