@@ -2,7 +2,6 @@ import json
 import tarfile
 import os
 import uuid
-import tempfile
 import logging
 
 from api.models import GalaxyInstance, Job, JobParam, MetricNumeric, Dataset
@@ -76,7 +75,7 @@ class Command(BaseCommand):
 
                 # fancy safe name.
                 tmpname = uuid.uuid4().hex + '.tsv'
-                extracted_to = os.path.join(tempfile.gettempdir(), 'grt', tmpname)
+                extracted_to = os.path.join(TMPDIR, tmpname)
                 logging.info("[%s] Extracting %s to %s, guessed:%s", instance.id, member.name, extracted_to, guessed)
                 # Record where the 'params' file is or the 'metrics' file.
                 data_map[guessed] = extracted_to
