@@ -1,5 +1,6 @@
 import json
 import tarfile
+import glob
 import os
 import uuid
 import logging
@@ -38,6 +39,12 @@ class Command(BaseCommand):
                     instance.save()
             except Exception:
                 logging.exception("Import error")
+            finally:
+                for file in glob.glob(TMPDIR, '*.tsv'):
+                    try:
+                        os.unlink(file)
+                    except Exception:
+                        logging.exception("Could not remove tempfile")
 
 
     def fix_name(self, member):
