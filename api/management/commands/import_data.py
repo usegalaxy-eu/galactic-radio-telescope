@@ -5,9 +5,10 @@ import uuid
 import tempfile
 import logging
 
-from api.models import GalaxyInstance, Job, JobParam, MetricNumeric, MetricText, Dataset
+from api.models import GalaxyInstance, Job, JobParam, MetricNumeric, Dataset
 from api.validator import validate
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 # from django.conf import settings
 from django.db import transaction
@@ -16,7 +17,8 @@ from postgres_copy import CopyMapping
 
 
 logging.basicConfig(level=logging.DEBUG)
-TMPDIR = os.path.join(tempfile.gettempdir(), 'grt')
+
+TMPDIR = os.path.join(settings.GRT_UPLOAD_DIRECTORY, 'grt')
 if not os.path.exists(TMPDIR):
     os.makedirs(TMPDIR)
 
@@ -35,8 +37,8 @@ class Command(BaseCommand):
                     # Once we've finished parsing reports for this instance, update the count.
                     instance.jobs_total = Job.objects.filter(instance_id=instance.id).count()
                     instance.save()
-            except Exception as e:
-                pass
+            except Exception:
+                logging.exception("Import error")
 
 
     def fix_name(self, member):
