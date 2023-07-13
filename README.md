@@ -1,17 +1,12 @@
-# Galactic Radio Telescope [![Docker Repository on Quay](https://quay.io/repository/erasche/galactic-radio-telescope/status "Docker Repository on Quay")](https://quay.io/repository/erasche/galactic-radio-telescope)
+# Galactic Radio Telescope
 
-![GRT Logo](media/grt-small.png)
+![GRT Logo, an radio telescope with the galaxy logo emitting from the telescope portion](media/grt-small.png)
 
 This is a project to collect metrics from Galaxy servers across the universe,
 and aggregate the data for statistical analysis.
 
 The ultimate goal of this project is to have a simple service which, based on
-hundreds of thousands of job runs, can help Galaxy administrators design
-optimised rules for distribution jobs to available clusters. This service
-should answer questions like:
-
-> If I'm mapping a 32 Gb FastQ dataset against a 1Mbp genome, what are the
-> *likely* minimum/optimal compute requirements
+hundreds of thousands of job runs, can help Galaxy administrators answer common questions.
 
 ## GRT Questions
 
@@ -26,6 +21,7 @@ Users:
 
 Admins:
 
+- common errors
 - runtimes of tools
 - relationships between runtime parameters and inputs
 - instance statistics?
